@@ -54,37 +54,14 @@ final class AI_PetverseTests: XCTestCase {
     }
 
     private func makeFixturePNG(width: Int, height: Int) throws -> Data {
-        var pixels = [UInt8](repeating: 0, count: width * height * 4)
-        for y in 0..<height {
-            for x in 0..<width {
-                let index = (y * width + x) * 4
-                let isWhite = x >= 24 && x < 72 && y >= 16 && y < 48
-                pixels[index] = isWhite ? 255 : 46
-                pixels[index + 1] = isWhite ? 255 : 133
-                pixels[index + 2] = isWhite ? 255 : 214
-                pixels[index + 3] = 255
-            }
+        // A tiny embedded PNG keeps this test independent of UIKit/Core Graphics
+        // context setup on headless CI simulators. The renderer still exercises
+        // its own ImageIO/Core Graphics decode and output path.
+        let encoded = "iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAEklEQVR4nGPQa732HxkzkC4AAEtvKIH633wCAAAAAElFTkSuQmCC"
+        guard let data = Data(base64Encoded: encoded) else {
+            throw AvatarGenerationError.invalidSourceImage
         }
-        guard let context = CGContext(
-            data: &pixels,
-            width: width,
-            height: height,
-            bitsPerComponent: 8,
-            bytesPerRow: width * 4,
-            space: CGColorSpaceCreateDeviceRGB(),
-            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-        ), let image = context.makeImage() else {
-            throw AvatarGenerationError.providerUnavailable
-        }
-        let output = NSMutableData()
-        guard let destination = CGImageDestinationCreateWithData(output, UTType.png.identifier as CFString, 1, nil) else {
-            throw AvatarGenerationError.providerUnavailable
-        }
-        CGImageDestinationAddImage(destination, image, nil)
-        guard CGImageDestinationFinalize(destination) else {
-            throw AvatarGenerationError.providerUnavailable
-        }
-        return output as Data
+        return data
     }
 
     private struct ImageDimensions {

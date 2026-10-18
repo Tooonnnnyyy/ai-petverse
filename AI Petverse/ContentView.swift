@@ -70,8 +70,6 @@ struct FeatureLine: View {
 
 struct PhotoInputView: View {
     @ObservedObject var store: AppStore
-    @State private var selectedItem: PhotosPickerItem?
-    @State private var selectedImage: Image?
 
     var body: some View {
         ZStack {
@@ -81,7 +79,7 @@ struct PhotoInputView: View {
                 Spacer(minLength: 28)
                 ZStack {
                     RoundedRectangle(cornerRadius: 28, style: .continuous).fill(.white.opacity(0.72))
-                    if let selectedImage {
+                    if let selectedImage = store.selectedPhotoImage {
                         selectedImage.resizable().scaledToFill().clipShape(RoundedRectangle(cornerRadius: 24))
                     } else {
                         VStack(spacing: 12) {
@@ -95,7 +93,7 @@ struct PhotoInputView: View {
                 .clipped()
                 .overlay(RoundedRectangle(cornerRadius: 28).stroke(PetverseTheme.ink.opacity(0.08)))
                 Spacer()
-                PhotosPicker(selection: $selectedItem, matching: .images) {
+                PhotosPicker(selection: $store.selectedPhotoItem, matching: .images) {
                     Label("Choose from photo library", systemImage: "photo.on.rectangle")
                         .font(.system(size: 15, weight: .semibold, design: .rounded))
                         .foregroundStyle(PetverseTheme.ink)
@@ -103,11 +101,12 @@ struct PhotoInputView: View {
                         .padding(.vertical, 15)
                         .background(.white.opacity(0.82), in: RoundedRectangle(cornerRadius: 17))
                 }
-                .onChange(of: selectedItem) { _, item in
+                .onChange(of: store.selectedPhotoItem) { _, item in
                     Task {
-                        guard let data = try? await item?.loadTransferable(type: Data.self), let data else { return }
+                        guard let item else { return }
+                        guard let data = try? await item.loadTransferable(type: Data.self) else { return }
                         guard let uiImage = UIImage(data: data), let compressed = uiImage.jpegData(compressionQuality: 0.78) else { return }
-                        selectedImage = Image(uiImage: uiImage)
+                        store.selectedPhotoImage = Image(uiImage: uiImage)
                         store.selectPhoto(compressed)
                     }
                 }
@@ -296,6 +295,3 @@ struct HomeView: View {
     }
 }
 
-#Preview {
-    ContentView(store: AppStore(persistence: LocalPetStore(defaults: UserDefaults(suiteName: "preview")!)))
-}

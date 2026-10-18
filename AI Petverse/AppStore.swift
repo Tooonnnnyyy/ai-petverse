@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import PhotosUI
 
 @MainActor
 final class AppStore: ObservableObject {
@@ -10,6 +11,8 @@ final class AppStore: ObservableObject {
     @Published var screen: Screen = .onboarding
     @Published var pet: PetProfile?
     @Published var draft = PetDraft()
+    @Published var selectedPhotoItem: PhotosPickerItem?
+    @Published var selectedPhotoImage: Image?
     @Published var generationError: String?
     @Published var reactionMessage: String?
     @Published var shareSheetPresented = false

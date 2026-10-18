@@ -20,6 +20,12 @@ xcodebuild -project "AI Petverse.xcodeproj" -scheme "AI Petverse" -sdk iphonesim
 
 When CoreSimulatorService is available, select an iOS 17+ simulator and run the `AI Petverse` scheme. The current prototype uses a local preview in place of a real AI generation call; P1 will evaluate a server-proxied provider and RealityKit separately.
 
+## Verification evidence
+
+- `docs/evidence/p0-onboarding-ios26.jpg` — first-run onboarding screen captured on iOS 26.0.1 Simulator.
+- `docs/evidence/p0-onboarding-ios26-latest.jpg` — photo-input Step 01 captured after a successful build, install, and launch on the same Simulator.
+- The screenshot and launch checks verify the app is visible and installable. Full click-through of PhotosPicker, share sheet, and delete confirmation still needs a local manual review because the Simulator accessibility session timed out.
+
 ## Privacy boundary
 
 Do not add API keys to the app target. Any future image provider must be called through a server-side proxy with validation, rate limits, cost limits, retention rules, and deletion support. This prototype does not upload the selected photo.

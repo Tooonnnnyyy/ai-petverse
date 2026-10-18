@@ -1,0 +1,26 @@
+name: iOS verification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Build and test
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test on iOS Simulator
+        run: |
+          xcodebuild \
+            -project "AI Petverse.xcodeproj" \
+            -scheme "AI Petverse" \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
+            CODE_SIGNING_ALLOWED=NO \
+            test

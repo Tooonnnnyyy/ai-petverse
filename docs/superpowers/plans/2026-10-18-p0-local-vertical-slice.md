@@ -8,7 +8,7 @@
 
 **Tech Stack:** Swift 6.4, SwiftUI, PhotosUI, UIKit share sheet bridge, Xcode project, XCTest-compatible pure domain tests.
 
-**Spec:** `/Users/bjt/Downloads/ai_petverse_prd_project_memory.md`
+**Spec:** local PRD/context file used during planning; it is intentionally not committed to this repository.
 
 ## Global Constraints
 
@@ -107,7 +107,7 @@
 
 **Files:**
 - Modify: `README.md`
-- Modify: `/Users/bjt/Downloads/ai_petverse_prd_project_memory.md`
+- Update the local PRD/context file separately; do not copy private local paths into the public repository.
 
 - [ ] Run `xcodebuild -project "AI Petverse.xcodeproj" -scheme "AI Petverse" -sdk iphonesimulator -destination "generic/platform=iOS Simulator" build`.
 - [ ] Run the XCTest target when a simulator destination is available; otherwise record the simulator service blocker and run a compile-only build.

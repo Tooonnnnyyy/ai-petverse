@@ -203,9 +203,11 @@ struct ResultView: View {
                 StepHeader(step: "02", title: "Meet your first version", subtitle: "A playful starting point. You can tune the mood before saving.")
                 Spacer(minLength: 26)
                 VStack(spacing: 16) {
-                    PetAvatar(style: store.draft.style, imageData: store.draft.avatarImageData, appearance: store.draft.appearance, size: 205)
+                    PetWorldView(scene: store.draft.scene, style: store.draft.style, appearance: store.draft.appearance, allowsCameraControl: false)
+                        .frame(height: 300)
+                        .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
                     Text(store.draft.style.title).font(.system(size: 22, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
-                    Text("Local preview · no photo uploaded").font(.system(size: 13, weight: .medium, design: .rounded)).foregroundStyle(PetverseTheme.ink.opacity(0.48))
+                    Text("Low-poly 3D world preview").font(.system(size: 13, weight: .medium, design: .rounded)).foregroundStyle(PetverseTheme.ink.opacity(0.48))
                 }
                 .frame(maxWidth: .infinity)
                 Spacer()
@@ -226,15 +228,23 @@ struct CustomizeView: View {
                 VStack(alignment: .leading, spacing: 22) {
                     StepHeader(step: "03", title: "Give them a point of view", subtitle: "Small choices make the character feel personal.")
                     HStack {
-                        PetAvatar(style: store.draft.style, imageData: store.draft.avatarImageData, appearance: store.draft.appearance, size: 116)
+                        PetWorldView(scene: store.draft.scene, style: store.draft.style, appearance: store.draft.appearance, allowsCameraControl: false)
+                            .frame(width: 140, height: 140)
+                            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("Style preview").font(.system(size: 13, weight: .semibold, design: .rounded)).foregroundStyle(PetverseTheme.ink.opacity(0.54))
+                            Text("3D world preview").font(.system(size: 13, weight: .semibold, design: .rounded)).foregroundStyle(PetverseTheme.ink.opacity(0.54))
                             Text(store.draft.style.title).font(.system(size: 21, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
                         }
                     }
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Name").font(.system(size: 14, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
                         TextField("Pet name", text: $store.draft.name).textFieldStyle(.plain).font(.system(size: 17, weight: .semibold, design: .rounded)).padding(15).background(.white.opacity(0.82), in: RoundedRectangle(cornerRadius: 15))
+                    }
+                    VStack(alignment: .leading, spacing: 11) {
+                        Text("Scene").font(.system(size: 14, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
+                        ForEach(PetScene.allCases) { scene in
+                            SceneCard(scene: scene, isSelected: store.draft.scene == scene) { store.draft.scene = scene }
+                        }
                     }
                     VStack(alignment: .leading, spacing: 11) {
                         Text("Visual mood").font(.system(size: 14, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
@@ -309,37 +319,59 @@ struct HomeView: View {
 
     var body: some View {
         ZStack {
-            SoftBackground(accent: Color(hex: profile?.style.accentHex ?? "E6DEFF").opacity(0.34))
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    HStack { BrandMark(); Spacer(); Button { store.deleteConfirmationPresented = true } label: { Image(systemName: "ellipsis").font(.system(size: 18, weight: .bold)).foregroundStyle(PetverseTheme.ink.opacity(0.7)).padding(10) } }
-                    if let profile {
-                        Text("Your little world").font(.system(size: 34, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
-                        Text("A quiet moment with \(profile.name).").font(.system(size: 15, design: .rounded)).foregroundStyle(PetverseTheme.ink.opacity(0.58))
-                        VStack(spacing: 12) {
-                            PetAvatar(style: profile.style, imageData: profile.avatarImageData, appearance: profile.appearance, size: 186)
-                            Text(profile.name).font(.system(size: 26, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
-                            Text(profile.style.title).font(.system(size: 13, weight: .semibold, design: .rounded)).foregroundStyle(PetverseTheme.coral)
-                        }
-                        .frame(maxWidth: .infinity)
-                        VStack(spacing: 15) {
-                            StatBar(title: "Mood", value: profile.state.mood, color: PetverseTheme.coral)
-                            StatBar(title: "Energy", value: profile.state.energy, color: Color(hex: "F5B942"))
-                            StatBar(title: "Bond", value: profile.state.bond, color: Color(hex: "49B98C"))
-                        }
-                        .padding(18)
-                        .background(.white.opacity(0.68), in: RoundedRectangle(cornerRadius: 21))
+            if let profile {
+                PetWorldView(scene: profile.scene, style: profile.style, appearance: profile.appearance, isPlaying: store.isPlaying)
+                    .ignoresSafeArea()
+                LinearGradient(
+                    colors: [.black.opacity(0.32), .clear, .black.opacity(0.7)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+                VStack(spacing: 0) {
+                    immersiveTopBar(profile: profile)
+                    Spacer()
+                    VStack(spacing: 12) {
                         if let reaction = store.reactionMessage {
-                            Text(reaction).font(.system(size: 14, weight: .semibold, design: .rounded)).foregroundStyle(PetverseTheme.ink).padding(14).frame(maxWidth: .infinity, alignment: .leading).background(PetverseTheme.mint, in: RoundedRectangle(cornerRadius: 16))
+                            Text(reaction)
+                                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                .foregroundStyle(PetverseTheme.ink)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 10)
+                                .background(.white.opacity(0.9), in: Capsule())
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
                         }
-                        PrimaryButton(title: "Play together", systemImage: "sparkles", tint: PetverseTheme.coral) { store.performInteraction() }
-                        SecondaryButton(title: "Save or share portrait") { store.openShareSheet() }
-                        Text("Share sheet opened ≠ published externally. You choose what happens next.").font(.system(size: 11, weight: .medium, design: .rounded)).foregroundStyle(PetverseTheme.ink.opacity(0.44)).frame(maxWidth: .infinity).multilineTextAlignment(.center)
+                        sceneSwitcher(selected: profile.scene)
+                        ImmersiveStatsCard(profile: profile)
+                        HStack(spacing: 10) {
+                            Button { store.performInteraction() } label: {
+                                Label("Play together", systemImage: "sparkles")
+                                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                                    .foregroundStyle(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 15)
+                                    .background(PetverseTheme.coral, in: Capsule())
+                            }
+                            .buttonStyle(.plain)
+                            Button { store.openShareSheet() } label: {
+                                Image(systemName: "square.and.arrow.up")
+                                    .font(.system(size: 17, weight: .bold))
+                                    .foregroundStyle(PetverseTheme.ink)
+                                    .frame(width: 52, height: 52)
+                                    .background(.white.opacity(0.9), in: Circle())
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
+                    .padding(.horizontal, 18)
+                    .padding(.bottom, 16)
                 }
-                .padding(26)
+                .padding(.top, 8)
+            } else {
+                SoftBackground()
             }
         }
+        .animation(.easeInOut(duration: 0.2), value: store.reactionMessage)
         .sheet(isPresented: $store.shareSheetPresented) {
             ShareSheet(items: shareItems)
         }
@@ -348,6 +380,49 @@ struct HomeView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("This removes the saved profile and source photo from this prototype device.")
+        }
+    }
+
+    @ViewBuilder
+    private func immersiveTopBar(profile: PetProfile) -> some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(profile.name)
+                    .font(.system(size: 25, weight: .bold, design: .rounded))
+                Text("\(profile.scene.emoji)  \(profile.scene.title)")
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .opacity(0.78)
+            }
+            .foregroundStyle(.white)
+            Spacer()
+            Button { store.deleteConfirmationPresented = true } label: {
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 42, height: 42)
+                    .background(.black.opacity(0.25), in: Circle())
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 18)
+    }
+
+    private func sceneSwitcher(selected: PetScene) -> some View {
+        HStack(spacing: 8) {
+            ForEach(PetScene.allCases) { scene in
+                Button { store.updateScene(scene) } label: {
+                    HStack(spacing: 5) {
+                        Text(scene.emoji)
+                        Text(scene.title)
+                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                    }
+                    .foregroundStyle(selected == scene ? PetverseTheme.ink : .white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 9)
+                    .background(selected == scene ? .white : .black.opacity(0.25), in: Capsule())
+                }
+                .buttonStyle(.plain)
+            }
         }
     }
 
@@ -366,6 +441,46 @@ struct HomeView: View {
         let renderer = ImageRenderer(content: ShareCardView(profile: profile))
         renderer.scale = UIScreen.main.scale
         return renderer.uiImage
+    }
+}
+
+struct ImmersiveStatsCard: View {
+    let profile: PetProfile
+
+    var body: some View {
+        HStack(spacing: 14) {
+            ImmersiveStat(title: "Mood", value: profile.state.mood, tint: PetverseTheme.coral)
+            ImmersiveStat(title: "Energy", value: profile.state.energy, tint: Color(hex: "F5B942"))
+            ImmersiveStat(title: "Bond", value: profile.state.bond, tint: Color(hex: "49B98C"))
+        }
+        .padding(.horizontal, 15)
+        .padding(.vertical, 13)
+        .background(.black.opacity(0.3), in: RoundedRectangle(cornerRadius: 19, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 19, style: .continuous).stroke(.white.opacity(0.2)))
+    }
+}
+
+struct ImmersiveStat: View {
+    let title: String
+    let value: Int
+    let tint: Color
+
+    var body: some View {
+        VStack(spacing: 5) {
+            Text(title.uppercased())
+                .font(.system(size: 10, weight: .bold, design: .rounded))
+                .foregroundStyle(.white.opacity(0.75))
+            Text("\(value)")
+                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+            Capsule()
+                .fill(.white.opacity(0.2))
+                .frame(width: 62, height: 5)
+                .overlay(alignment: .leading) {
+                    Capsule().fill(tint).frame(width: 62 * CGFloat(value) / 100, height: 5)
+                }
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 

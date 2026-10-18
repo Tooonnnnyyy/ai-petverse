@@ -20,6 +20,7 @@ final class AppStore: ObservableObject {
     @Published var shareSheetPresented = false
     @Published var deleteConfirmationPresented = false
     @Published private(set) var isGenerating = false
+    @Published private(set) var isPlaying = false
     @Published private(set) var events: [String] = []
 
     private let persistence: LocalPetStore
@@ -28,6 +29,7 @@ final class AppStore: ObservableObject {
     private var photoLoadTask: Task<Void, Never>?
     private var generationID: UUID?
     private var photoLoadID: UUID?
+    private var interactionTask: Task<Void, Never>?
 
     init(
         persistence: LocalPetStore = LocalPetStore(),
@@ -165,6 +167,16 @@ final class AppStore: ObservableObject {
         }
     }
 
+    func updateScene(_ scene: PetScene) {
+        guard var profile = pet else { return }
+        guard profile.scene != scene else { return }
+        profile.scene = scene
+        pet = profile
+        persistence.save(profile)
+        reactionMessage = nil
+        track("scene_changed_\(scene.rawValue)")
+    }
+
     func loadPhoto(from item: PhotosPickerItem) {
         photoLoadTask?.cancel()
         let requestID = UUID()
@@ -206,6 +218,13 @@ final class AppStore: ObservableObject {
 
     func performInteraction(at date: Date = Date()) {
         guard var profile = pet else { return }
+        interactionTask?.cancel()
+        isPlaying = true
+        interactionTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .milliseconds(720))
+            guard !Task.isCancelled else { return }
+            self?.isPlaying = false
+        }
         if let lastInteractionAt = profile.state.lastInteractionAt,
            date.timeIntervalSince(lastInteractionAt) < 5 {
             reactionMessage = "Your pet is still catching its breath — try again in a moment."

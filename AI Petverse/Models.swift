@@ -35,6 +35,7 @@ struct PetProfile: Codable, Equatable, Identifiable {
     var id: UUID = UUID()
     var name: String
     var style: PetStyle
+    var scene: PetScene
     var appearance: PetAppearance
     var personality: PetPersonality
     var state: PetState
@@ -48,6 +49,7 @@ struct PetProfile: Codable, Equatable, Identifiable {
         PetProfile(
             name: "Mochi",
             style: .sunny,
+            scene: .pixelGrove,
             appearance: PetAppearance(),
             personality: PetPersonality(),
             state: PetState(),
@@ -57,13 +59,14 @@ struct PetProfile: Codable, Equatable, Identifiable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case id, name, style, appearance, personality, state, sourceImageData, avatarImageData, createdAt
+        case id, name, style, scene, appearance, personality, state, sourceImageData, avatarImageData, createdAt
     }
 
     init(
         id: UUID = UUID(),
         name: String,
         style: PetStyle,
+        scene: PetScene = .pixelGrove,
         appearance: PetAppearance,
         personality: PetPersonality,
         state: PetState,
@@ -74,6 +77,7 @@ struct PetProfile: Codable, Equatable, Identifiable {
         self.id = id
         self.name = name
         self.style = style
+        self.scene = scene
         self.appearance = appearance
         self.personality = personality
         self.state = state
@@ -87,12 +91,55 @@ struct PetProfile: Codable, Equatable, Identifiable {
         id = try container.decode(UUID.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         style = try container.decode(PetStyle.self, forKey: .style)
+        scene = try container.decodeIfPresent(PetScene.self, forKey: .scene) ?? .pixelGrove
         appearance = try container.decode(PetAppearance.self, forKey: .appearance)
         personality = try container.decode(PetPersonality.self, forKey: .personality)
         state = try container.decode(PetState.self, forKey: .state)
         sourceImageData = try container.decodeIfPresent(Data.self, forKey: .sourceImageData)
         avatarImageData = try container.decodeIfPresent(Data.self, forKey: .avatarImageData)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
+    }
+}
+
+enum PetScene: String, CaseIterable, Codable, Identifiable, Sendable {
+    case pixelGrove
+    case neonArcade
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .pixelGrove: return "Pixel Grove"
+        case .neonArcade: return "Neon Arcade"
+        }
+    }
+
+    var subtitle: String {
+        switch self {
+        case .pixelGrove: return "Cozy voxel farm"
+        case .neonArcade: return "Y2K night glow"
+        }
+    }
+
+    var detail: String {
+        switch self {
+        case .pixelGrove: return "Blocky paths, warm crops, tiny adventures."
+        case .neonArcade: return "Arcade lights, synth skies, late-night zoomies."
+        }
+    }
+
+    var emoji: String {
+        switch self {
+        case .pixelGrove: return "🌱"
+        case .neonArcade: return "🕹️"
+        }
+    }
+
+    var accentHex: String {
+        switch self {
+        case .pixelGrove: return "DDF7EE"
+        case .neonArcade: return "E6DEFF"
+        }
     }
 }
 
@@ -139,6 +186,7 @@ enum PetStyle: String, CaseIterable, Codable, Identifiable, Sendable {
 struct PetDraft: Equatable {
     var name: String = "Mochi"
     var style: PetStyle = .sunny
+    var scene: PetScene = .pixelGrove
     var appearance = PetAppearance()
     var personality = PetPersonality()
     var sourceImageData: Data?
@@ -148,6 +196,7 @@ struct PetDraft: Equatable {
         guard let profile else { return }
         name = profile.name
         style = profile.style
+        scene = profile.scene
         appearance = profile.appearance
         personality = profile.personality
         sourceImageData = profile.sourceImageData
@@ -158,6 +207,7 @@ struct PetDraft: Equatable {
         PetProfile(
             name: name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Mochi" : name,
             style: style,
+            scene: scene,
             appearance: appearance,
             personality: personality,
             state: PetState(),

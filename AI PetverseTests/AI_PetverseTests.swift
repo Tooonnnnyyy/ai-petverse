@@ -25,6 +25,7 @@ final class AI_PetverseTests: XCTestCase {
         let profile = PetProfile(
             name: "Nori",
             style: .midnight,
+            scene: .neonArcade,
             appearance: PetAppearance(color: "violet", accessory: "star collar"),
             personality: PetPersonality(playfulness: 40, curiosity: 90, affection: 55),
             state: PetState(mood: 50, energy: 60, bond: 8, lastInteractionAt: nil),
@@ -63,6 +64,32 @@ final class AI_PetverseTests: XCTestCase {
         XCTAssertNil(decoded.avatarImageData)
     }
 
+    func testLegacyProfileWithoutSceneDefaultsToPixelGrove() throws {
+        let data = try JSONEncoder().encode(PetProfile.fallback)
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        object.removeValue(forKey: "scene")
+        let legacyData = try JSONSerialization.data(withJSONObject: object)
+        XCTAssertEqual(try JSONDecoder().decode(PetProfile.self, from: legacyData).scene, .pixelGrove)
+    }
+
+    @MainActor
+    func testSceneSelectionUpdatesAndPersistsOnSavedPet() {
+        let suiteName = "AI_PetverseTests.scene-selection"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defaults.removePersistentDomain(forName: suiteName)
+        let store = AppStore(persistence: LocalPetStore(defaults: defaults))
+
+        store.useTemplate()
+        store.continueToCustomize()
+        store.savePet()
+        XCTAssertEqual(store.pet?.scene, .pixelGrove)
+
+        store.updateScene(.neonArcade)
+
+        XCTAssertEqual(store.pet?.scene, .neonArcade)
+        XCTAssertEqual(LocalPetStore(defaults: defaults).load()?.scene, .neonArcade)
+    }
+
     func testLocalPetStoreSavesAndDeletes() {
         let defaults = UserDefaults(suiteName: "AI_PetverseTests.store")!
         defaults.removePersistentDomain(forName: "AI_PetverseTests.store")
@@ -96,6 +123,27 @@ final class AI_PetverseTests: XCTestCase {
         let firstBond = store.pet?.state.bond
         store.performInteraction(at: firstDate.addingTimeInterval(1))
         XCTAssertEqual(store.pet?.state.bond, firstBond)
+        XCTAssertEqual(store.events.last, "pet_interaction_cooldown")
+    }
+
+    @MainActor
+    func testPlayTogetherProducesVisiblePlayingStateAndCooldownFeedback() {
+        let suiteName = "AI_PetverseTests.playing"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defaults.removePersistentDomain(forName: suiteName)
+        let store = AppStore(persistence: LocalPetStore(defaults: defaults))
+        store.startCreation()
+        store.useTemplate()
+        store.continueToCustomize()
+        store.savePet()
+
+        let date = Date(timeIntervalSince1970: 1_000)
+        store.performInteraction(at: date)
+        XCTAssertTrue(store.isPlaying)
+        XCTAssertEqual(store.pet?.state.bond, 15)
+        store.performInteraction(at: date.addingTimeInterval(1))
+        XCTAssertTrue(store.isPlaying)
+        XCTAssertEqual(store.pet?.state.bond, 15)
         XCTAssertEqual(store.events.last, "pet_interaction_cooldown")
     }
 

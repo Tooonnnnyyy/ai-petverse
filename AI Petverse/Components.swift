@@ -60,6 +60,7 @@ struct SecondaryButton: View {
 struct PetAvatar: View {
     let style: PetStyle
     var imageData: Data? = nil
+    var appearance = PetAppearance()
     var size: CGFloat = 160
 
     var body: some View {
@@ -81,9 +82,42 @@ struct PetAvatar: View {
                     .frame(width: size * 0.66, height: size * 0.66)
                     .clipShape(RoundedRectangle(cornerRadius: size * 0.13, style: .continuous))
                     .overlay(RoundedRectangle(cornerRadius: size * 0.13).stroke(PetverseTheme.hotPink.opacity(0.4), lineWidth: 3))
+                    .overlay {
+                        Color(hex: appearance.colorHex)
+                            .opacity(0.18)
+                            .clipShape(RoundedRectangle(cornerRadius: size * 0.13, style: .continuous))
+                            .allowsHitTesting(false)
+                    }
             } else {
                 Text(style.emoji).font(.system(size: size * 0.42)).shadow(color: PetverseTheme.hotPink.opacity(0.35), radius: 0, x: 4, y: 4)
             }
+            if let accessory = appearance.accessorySymbol {
+                Text(accessory)
+                    .font(.system(size: size * 0.19))
+                    .padding(5)
+                    .background(.white.opacity(0.88), in: Circle())
+                    .offset(x: size * 0.29, y: -size * 0.29)
+            }
+        }
+    }
+}
+
+private extension PetAppearance {
+    var colorHex: String {
+        switch color {
+        case "violet": return "8B5CF6"
+        case "mint": return "49B98C"
+        case "rose": return "FF4FB3"
+        default: return "F59E0B"
+        }
+    }
+
+    var accessorySymbol: String? {
+        switch accessory {
+        case "star collar": return "⭐️"
+        case "party hat": return "🎉"
+        case "flower": return "🌸"
+        default: return nil
         }
     }
 }

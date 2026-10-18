@@ -109,20 +109,7 @@ struct PhotoInputView: View {
                 }
                 .buttonStyle(.plain)
                 .onChange(of: store.selectedPhotoItem) { _, item in
-                    Task {
-                        guard let item else { return }
-                        do {
-                            guard let data = try await item.loadTransferable(type: Data.self),
-                                  let uiImage = UIImage(data: data),
-                                  let compressed = uiImage.jpegData(compressionQuality: 0.78) else {
-                                store.reportPhotoError("That image could not be read. Try another photo.")
-                                return
-                            }
-                            store.selectPhoto(compressed, preview: Image(uiImage: uiImage))
-                        } catch {
-                            store.reportPhotoError("That image could not be read. Try another photo.")
-                        }
-                    }
+                    if let item { store.loadPhoto(from: item) }
                 }
                 .sheet(isPresented: $store.cameraPresented) {
                     CameraPicker { image in
@@ -216,7 +203,7 @@ struct ResultView: View {
                 StepHeader(step: "02", title: "Meet your first version", subtitle: "A playful starting point. You can tune the mood before saving.")
                 Spacer(minLength: 26)
                 VStack(spacing: 16) {
-                    PetAvatar(style: store.draft.style, imageData: store.draft.sourceImageData, size: 205)
+                    PetAvatar(style: store.draft.style, imageData: store.draft.avatarImageData, appearance: store.draft.appearance, size: 205)
                     Text(store.draft.style.title).font(.system(size: 22, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
                     Text("Local preview · no photo uploaded").font(.system(size: 13, weight: .medium, design: .rounded)).foregroundStyle(PetverseTheme.ink.opacity(0.48))
                 }
@@ -239,7 +226,7 @@ struct CustomizeView: View {
                 VStack(alignment: .leading, spacing: 22) {
                     StepHeader(step: "03", title: "Give them a point of view", subtitle: "Small choices make the character feel personal.")
                     HStack {
-                        PetAvatar(style: store.draft.style, imageData: store.draft.sourceImageData, size: 116)
+                        PetAvatar(style: store.draft.style, imageData: store.draft.avatarImageData, appearance: store.draft.appearance, size: 116)
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Style preview").font(.system(size: 13, weight: .semibold, design: .rounded)).foregroundStyle(PetverseTheme.ink.opacity(0.54))
                             Text(store.draft.style.title).font(.system(size: 21, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
@@ -252,7 +239,7 @@ struct CustomizeView: View {
                     VStack(alignment: .leading, spacing: 11) {
                         Text("Visual mood").font(.system(size: 14, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
                         ForEach(PetStyle.allCases) { style in
-                            Button { store.draft.style = style } label: {
+                            Button { store.updateStyle(style) } label: {
                                 HStack(spacing: 13) {
                                     Text(style.emoji).font(.system(size: 24))
                                     VStack(alignment: .leading, spacing: 2) {
@@ -268,6 +255,11 @@ struct CustomizeView: View {
                             }
                             .buttonStyle(.plain)
                         }
+                    }
+                    VStack(alignment: .leading, spacing: 11) {
+                        Text("Avatar details").font(.system(size: 14, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
+                        AppearancePicker(title: "Colour", values: [("sunset", "Sunset"), ("violet", "Violet"), ("mint", "Mint"), ("rose", "Rose")], selection: $store.draft.appearance.color)
+                        AppearancePicker(title: "Accessory", values: [("none", "None"), ("star collar", "Star collar"), ("party hat", "Party hat"), ("flower", "Flower")], selection: $store.draft.appearance.accessory)
                     }
                     VStack(alignment: .leading, spacing: 11) {
                         Text("Personality").font(.system(size: 14, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
@@ -295,6 +287,22 @@ struct PersonalitySlider: View {
     }
 }
 
+struct AppearancePicker: View {
+    let title: String
+    let values: [(String, String)]
+    @Binding var selection: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title).font(.system(size: 13, weight: .medium, design: .rounded)).foregroundStyle(PetverseTheme.ink.opacity(0.62))
+            Picker(title, selection: $selection) {
+                ForEach(Array(values.enumerated()), id: \.offset) { _, value in Text(value.1).tag(value.0) }
+            }
+            .pickerStyle(.segmented)
+        }
+    }
+}
+
 struct HomeView: View {
     @ObservedObject var store: AppStore
     var profile: PetProfile? { store.pet }
@@ -309,7 +317,7 @@ struct HomeView: View {
                         Text("Your little world").font(.system(size: 34, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
                         Text("A quiet moment with \(profile.name).").font(.system(size: 15, design: .rounded)).foregroundStyle(PetverseTheme.ink.opacity(0.58))
                         VStack(spacing: 12) {
-                            PetAvatar(style: profile.style, imageData: profile.sourceImageData, size: 186)
+                            PetAvatar(style: profile.style, imageData: profile.avatarImageData, appearance: profile.appearance, size: 186)
                             Text(profile.name).font(.system(size: 26, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
                             Text(profile.style.title).font(.system(size: 13, weight: .semibold, design: .rounded)).foregroundStyle(PetverseTheme.coral)
                         }
@@ -375,7 +383,7 @@ struct ShareCardView: View {
                 Text("petverse")
                     .font(.system(size: 17, weight: .bold, design: .rounded))
                     .foregroundStyle(PetverseTheme.ink.opacity(0.65))
-                PetAvatar(style: profile.style, imageData: profile.sourceImageData, size: 190)
+                PetAvatar(style: profile.style, imageData: profile.avatarImageData, appearance: profile.appearance, size: 190)
                 Text(profile.name)
                     .font(.system(size: 30, weight: .bold, design: .rounded))
                     .foregroundStyle(PetverseTheme.ink)

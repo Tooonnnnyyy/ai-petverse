@@ -39,6 +39,9 @@ struct PetProfile: Codable, Equatable, Identifiable {
     var personality: PetPersonality
     var state: PetState
     var sourceImageData: Data?
+    /// The locally rendered pixel avatar. Kept separate from the original so the
+    /// product never presents the uploaded photo as a generated result.
+    var avatarImageData: Data?
     var createdAt: Date = Date()
 
     static var fallback: PetProfile {
@@ -48,12 +51,52 @@ struct PetProfile: Codable, Equatable, Identifiable {
             appearance: PetAppearance(),
             personality: PetPersonality(),
             state: PetState(),
-            sourceImageData: nil
+            sourceImageData: nil,
+            avatarImageData: nil
         )
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, style, appearance, personality, state, sourceImageData, avatarImageData, createdAt
+    }
+
+    init(
+        id: UUID = UUID(),
+        name: String,
+        style: PetStyle,
+        appearance: PetAppearance,
+        personality: PetPersonality,
+        state: PetState,
+        sourceImageData: Data?,
+        avatarImageData: Data? = nil,
+        createdAt: Date = Date()
+    ) {
+        self.id = id
+        self.name = name
+        self.style = style
+        self.appearance = appearance
+        self.personality = personality
+        self.state = state
+        self.sourceImageData = sourceImageData
+        self.avatarImageData = avatarImageData
+        self.createdAt = createdAt
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        style = try container.decode(PetStyle.self, forKey: .style)
+        appearance = try container.decode(PetAppearance.self, forKey: .appearance)
+        personality = try container.decode(PetPersonality.self, forKey: .personality)
+        state = try container.decode(PetState.self, forKey: .state)
+        sourceImageData = try container.decodeIfPresent(Data.self, forKey: .sourceImageData)
+        avatarImageData = try container.decodeIfPresent(Data.self, forKey: .avatarImageData)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
     }
 }
 
-enum PetStyle: String, CaseIterable, Codable, Identifiable {
+enum PetStyle: String, CaseIterable, Codable, Identifiable, Sendable {
     case sunny
     case midnight
     case candy
@@ -99,6 +142,7 @@ struct PetDraft: Equatable {
     var appearance = PetAppearance()
     var personality = PetPersonality()
     var sourceImageData: Data?
+    var avatarImageData: Data?
 
     init(profile: PetProfile? = nil) {
         guard let profile else { return }
@@ -107,6 +151,7 @@ struct PetDraft: Equatable {
         appearance = profile.appearance
         personality = profile.personality
         sourceImageData = profile.sourceImageData
+        avatarImageData = profile.avatarImageData
     }
 
     func makeProfile() -> PetProfile {
@@ -116,7 +161,8 @@ struct PetDraft: Equatable {
             appearance: appearance,
             personality: personality,
             state: PetState(),
-            sourceImageData: sourceImageData
+            sourceImageData: sourceImageData,
+            avatarImageData: avatarImageData
         )
     }
 }

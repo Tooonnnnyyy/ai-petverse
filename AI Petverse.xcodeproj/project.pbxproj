@@ -14,6 +14,7 @@
 		A00000000000000000000205 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000105 /* ContentView.swift */; };
 		A00000000000000000000206 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000106 /* Components.swift */; };
 		A00000000000000000000207 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000107 /* ShareSheet.swift */; };
+		A00000000000000000000210 /* AvatarGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000113 /* AvatarGeneration.swift */; };
 		A00000000000000000000208 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000108 /* Assets.xcassets */; };
 		A00000000000000000000209 /* AI_PetverseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000112 /* AI_PetverseTests.swift */; };
 /* End PBXBuildFile section */
@@ -49,6 +50,7 @@
 		A00000000000000000000110 /* AI Petverse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AI Petverse.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A00000000000000000000111 /* AI PetverseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "AI PetverseTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A00000000000000000000112 /* AI_PetverseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AI_PetverseTests.swift; sourceTree = "<group>"; };
+		A00000000000000000000113 /* AvatarGeneration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarGeneration.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +90,7 @@
 				A00000000000000000000105 /* ContentView.swift */,
 				A00000000000000000000106 /* Components.swift */,
 				A00000000000000000000107 /* ShareSheet.swift */,
+				A00000000000000000000113 /* AvatarGeneration.swift */,
 				A00000000000000000000108 /* Assets.xcassets */,
 				A00000000000000000000109 /* Info.plist */,
 			);
@@ -198,6 +201,7 @@
 				A00000000000000000000205 /* ContentView.swift in Sources */,
 				A00000000000000000000206 /* Components.swift in Sources */,
 				A00000000000000000000207 /* ShareSheet.swift in Sources */,
+				A00000000000000000000210 /* AvatarGeneration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

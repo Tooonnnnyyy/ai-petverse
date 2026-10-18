@@ -5,6 +5,7 @@ AI Petverse is an iOS-first prototype for validating whether people want to turn
 This first P0 slice is deliberately local-first:
 
 - SwiftUI screens for onboarding, photo input, local mock generation, customization, pet home, interaction, export, and deletion.
+- Generation is behind an `AvatarGenerationService` seam, so provider errors return to photo input with retry and preset fallback instead of trapping the user.
 - No account, cloud sync, paid service, API key, AI provider, or AR dependency.
 - Source photos remain on-device and are stored only with the local prototype profile.
 - Growth state is deterministic and testable; an AI model never controls mood, energy, or bond.
@@ -18,7 +19,8 @@ Open `AI Petverse.xcodeproj` in Xcode 27 or run:
 xcodebuild -project "AI Petverse.xcodeproj" -scheme "AI Petverse" -sdk iphonesimulator -destination "generic/platform=iOS Simulator" build
 ```
 
-When CoreSimulatorService is available, select an iOS 17+ simulator and run the `AI Petverse` scheme. The current prototype uses a local preview in place of a real AI generation call; P1 will evaluate a server-proxied provider and RealityKit separately.
+When CoreSimulatorService is available, select an iOS 17+ simulator and run the `AI Petverse` scheme. The current prototype uses a local pixel stylization preview in place of a real AI generation call; P1 will evaluate a server-proxied provider and RealityKit separately. The renderer crops and downsamples the selected image, applies a style palette, and exports a 576px nearest-neighbor PNG. It does not claim to be an AI reconstruction or a 3D avatar.
+`LocalPreviewAvatarGenerationService` is deterministic, cancellable, and does not upload photos or call an AI provider.
 
 ## Verification evidence
 

@@ -279,7 +279,7 @@ struct HomeView: View {
             }
         }
         .sheet(isPresented: $store.shareSheetPresented) {
-            ShareSheet(items: [shareText])
+            ShareSheet(items: shareItems)
         }
         .confirmationDialog("Delete this local pet?", isPresented: $store.deleteConfirmationPresented) {
             Button("Delete", role: .destructive) { store.deletePet() }
@@ -292,5 +292,49 @@ struct HomeView: View {
     private var shareText: String {
         guard let profile else { return "My AI Petverse companion" }
         return "Meet \(profile.name), my \(profile.style.title) companion in AI Petverse ✦"
+    }
+
+    private var shareItems: [Any] {
+        guard let image = renderedShareImage else { return [shareText] }
+        return [image, shareText]
+    }
+
+    private var renderedShareImage: UIImage? {
+        guard let profile else { return nil }
+        let renderer = ImageRenderer(content: ShareCardView(profile: profile))
+        renderer.scale = UIScreen.main.scale
+        return renderer.uiImage
+    }
+}
+
+struct ShareCardView: View {
+    let profile: PetProfile
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                colors: [Color(hex: profile.style.accentHex).opacity(0.95), PetverseTheme.lavender],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            VStack(spacing: 18) {
+                Text("petverse")
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .foregroundStyle(PetverseTheme.ink.opacity(0.65))
+                PetAvatar(style: profile.style, imageData: profile.sourceImageData, size: 190)
+                Text(profile.name)
+                    .font(.system(size: 30, weight: .bold, design: .rounded))
+                    .foregroundStyle(PetverseTheme.ink)
+                Text(profile.style.title)
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundStyle(PetverseTheme.ink.opacity(0.68))
+                Text("A little more magic for every day.")
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .foregroundStyle(PetverseTheme.ink.opacity(0.52))
+            }
+            .padding(28)
+        }
+        .frame(width: 360, height: 480)
+        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
     }
 }

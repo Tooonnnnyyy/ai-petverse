@@ -15,7 +15,7 @@ This is the project-level entry point for the reusable workflow in the public Kn
 ## Repeatable agent start
 
 ```bash
-cd /Users/bjt/Projects/ai-petverse
+cd <repository-root>
 git status --short --branch
 git remote -v
 git log -1 --oneline

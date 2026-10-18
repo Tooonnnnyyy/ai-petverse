@@ -294,4 +294,3 @@ struct HomeView: View {
         return "Meet \(profile.name), my \(profile.style.title) companion in AI Petverse ✦"
     }
 }
-

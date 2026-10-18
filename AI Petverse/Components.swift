@@ -5,7 +5,7 @@ struct BrandMark: View {
     var body: some View {
         HStack(spacing: 9) {
             ZStack {
-                Circle().fill(PetverseTheme.ink)
+                RoundedRectangle(cornerRadius: 8, style: .continuous).fill(PetverseTheme.ink)
                 Text("✦").font(.system(size: 17, weight: .bold)).foregroundStyle(.white)
             }
             .frame(width: 32, height: 32)
@@ -64,21 +64,25 @@ struct PetAvatar: View {
 
     var body: some View {
         ZStack {
-            Circle()
-                .fill(Color(hex: style.accentHex).opacity(0.18))
+            RoundedRectangle(cornerRadius: size * 0.18, style: .continuous)
+                .fill(Color(hex: style.accentHex).opacity(0.22))
                 .frame(width: size, height: size)
-            Circle()
-                .fill(.white.opacity(0.88))
+                .overlay(alignment: .topLeading) {
+                    RoundedRectangle(cornerRadius: 5).fill(PetverseTheme.electricBlue.opacity(0.5)).frame(width: size * 0.2, height: size * 0.06).offset(x: size * 0.12, y: size * 0.1)
+                }
+            RoundedRectangle(cornerRadius: size * 0.15, style: .continuous)
+                .fill(.white.opacity(0.92))
                 .frame(width: size * 0.82, height: size * 0.82)
-                .shadow(color: PetverseTheme.ink.opacity(0.1), radius: 20, y: 10)
+                .shadow(color: PetverseTheme.ink.opacity(0.12), radius: 0, x: 7, y: 7)
             if let imageData, let uiImage = UIImage(data: imageData) {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFill()
                     .frame(width: size * 0.66, height: size * 0.66)
-                    .clipShape(Circle())
+                    .clipShape(RoundedRectangle(cornerRadius: size * 0.13, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: size * 0.13).stroke(PetverseTheme.hotPink.opacity(0.4), lineWidth: 3))
             } else {
-                Text(style.emoji).font(.system(size: size * 0.42))
+                Text(style.emoji).font(.system(size: size * 0.42)).shadow(color: PetverseTheme.hotPink.opacity(0.35), radius: 0, x: 4, y: 4)
             }
         }
     }

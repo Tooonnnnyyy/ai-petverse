@@ -40,4 +40,27 @@ final class AI_PetverseTests: XCTestCase {
         store.delete()
         XCTAssertNil(store.load())
     }
+
+    @MainActor
+    func testGenerationRequiresPhotoAndInteractionHasCooldown() {
+        let suiteName = "AI_PetverseTests.behavior"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defaults.removePersistentDomain(forName: suiteName)
+        let store = AppStore(persistence: LocalPetStore(defaults: defaults))
+
+        store.startCreation()
+        store.beginGeneration()
+        XCTAssertEqual(store.screen, .photoInput)
+        XCTAssertEqual(store.events.last, "generation_blocked_missing_photo")
+
+        store.useTemplate()
+        store.continueToCustomize()
+        store.savePet()
+        let firstDate = Date(timeIntervalSince1970: 100)
+        store.performInteraction(at: firstDate)
+        let firstBond = store.pet?.state.bond
+        store.performInteraction(at: firstDate.addingTimeInterval(1))
+        XCTAssertEqual(store.pet?.state.bond, firstBond)
+        XCTAssertEqual(store.events.last, "pet_interaction_cooldown")
+    }
 }

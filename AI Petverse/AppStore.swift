@@ -13,6 +13,8 @@ final class AppStore: ObservableObject {
     @Published var draft = PetDraft()
     @Published var selectedPhotoItem: PhotosPickerItem?
     @Published var selectedPhotoImage: Image?
+    @Published var cameraPresented = false
+    @Published var photoError: String?
     @Published var generationError: String?
     @Published var reactionMessage: String?
     @Published var shareSheetPresented = false
@@ -21,6 +23,7 @@ final class AppStore: ObservableObject {
     @Published private(set) var events: [String] = []
 
     private let persistence: LocalPetStore
+    private var generationTask: Task<Void, Never>?
 
     init(persistence: LocalPetStore = LocalPetStore()) {
         self.persistence = persistence
@@ -29,8 +32,12 @@ final class AppStore: ObservableObject {
     }
 
     func startCreation() {
+        generationTask?.cancel()
         draft = PetDraft()
+        selectedPhotoItem = nil
+        selectedPhotoImage = nil
         generationError = nil
+        photoError = nil
         reactionMessage = nil
         screen = .photoInput
         track("pet_creation_started")
@@ -38,25 +45,49 @@ final class AppStore: ObservableObject {
 
     func selectPhoto(_ data: Data) {
         draft.sourceImageData = data
+        photoError = nil
         track("pet_photo_selected")
     }
 
+    func selectPhoto(_ data: Data, preview: Image) {
+        selectedPhotoImage = preview
+        selectPhoto(data)
+    }
+
+    func reportPhotoError(_ message: String) {
+        photoError = message
+    }
+
     func beginGeneration() {
+        guard draft.sourceImageData != nil else {
+            generationError = "Choose a pet photo first, or use the preset template below."
+            track("generation_blocked_missing_photo")
+            return
+        }
+        generationTask?.cancel()
         generationError = nil
         isGenerating = true
         screen = .generating
         track("generation_requested")
-        Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .milliseconds(650))
-            guard let self else { return }
+        let task = Task { @MainActor [weak self] in
+            do {
+                try await Task.sleep(for: .milliseconds(650))
+            } catch {
+                return
+            }
+            guard let self, self.isGenerating else { return }
             self.isGenerating = false
             self.screen = .result
             self.track("generation_succeeded")
         }
+        generationTask = task
     }
 
     func useTemplate() {
+        generationTask?.cancel()
         draft.sourceImageData = nil
+        selectedPhotoItem = nil
+        selectedPhotoImage = nil
         generationError = nil
         isGenerating = false
         screen = .result
@@ -79,9 +110,15 @@ final class AppStore: ObservableObject {
         track("pet_saved")
     }
 
-    func performInteraction() {
+    func performInteraction(at date: Date = Date()) {
         guard var profile = pet else { return }
-        reactionMessage = profile.state.interact()
+        if let lastInteractionAt = profile.state.lastInteractionAt,
+           date.timeIntervalSince(lastInteractionAt) < 5 {
+            reactionMessage = "Your pet is still catching its breath — try again in a moment."
+            track("pet_interaction_cooldown")
+            return
+        }
+        reactionMessage = profile.state.interact(at: date)
         pet = profile
         persistence.save(profile)
         track("pet_interaction_completed")
@@ -93,9 +130,13 @@ final class AppStore: ObservableObject {
     }
 
     func deletePet() {
+        generationTask?.cancel()
         persistence.delete()
         pet = nil
         draft = PetDraft()
+        selectedPhotoItem = nil
+        selectedPhotoImage = nil
+        photoError = nil
         reactionMessage = nil
         deleteConfirmationPresented = false
         screen = .onboarding

@@ -78,7 +78,7 @@ struct PhotoInputView: View {
                 StepHeader(step: "01", title: "Start with a favorite photo", subtitle: "Pick one clear photo. We will use it only for this local prototype preview.")
                 Spacer(minLength: 28)
                 ZStack {
-                    RoundedRectangle(cornerRadius: 28, style: .continuous).fill(.white.opacity(0.72))
+                    PixelPanel()
                     if let selectedImage = store.selectedPhotoImage {
                         selectedImage.resizable().scaledToFill().clipShape(RoundedRectangle(cornerRadius: 24))
                     } else {
@@ -93,25 +93,62 @@ struct PhotoInputView: View {
                 .clipped()
                 .overlay(RoundedRectangle(cornerRadius: 28).stroke(PetverseTheme.ink.opacity(0.08)))
                 Spacer()
-                PhotosPicker(selection: $store.selectedPhotoItem, matching: .images) {
-                    Label("Choose from photo library", systemImage: "photo.on.rectangle")
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
-                        .foregroundStyle(PetverseTheme.ink)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15)
-                        .background(.white.opacity(0.82), in: RoundedRectangle(cornerRadius: 17))
-                }
-                .onChange(of: store.selectedPhotoItem) { _, item in
-                    Task {
-                        guard let item else { return }
-                        guard let data = try? await item.loadTransferable(type: Data.self) else { return }
-                        guard let uiImage = UIImage(data: data), let compressed = uiImage.jpegData(compressionQuality: 0.78) else { return }
-                        store.selectedPhotoImage = Image(uiImage: uiImage)
-                        store.selectPhoto(compressed)
+                HStack(spacing: 12) {
+                    Button {
+                        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                            store.cameraPresented = true
+                        } else {
+                            store.reportPhotoError("Camera is unavailable here. Use the photo library or a preset template.")
+                        }
+                    } label: {
+                        CaptureChoice(title: "Scan with camera", icon: "camera.fill", tint: PetverseTheme.coral)
+                    }
+                    PhotosPicker(selection: $store.selectedPhotoItem, matching: .images) {
+                        CaptureChoice(title: "Upload photo", icon: "photo.on.rectangle", tint: PetverseTheme.purple)
                     }
                 }
                 .buttonStyle(.plain)
-                PrimaryButton(title: "Preview my pet", systemImage: "sparkles") { store.beginGeneration() }
+                .onChange(of: store.selectedPhotoItem) { _, item in
+                    Task {
+                        guard let item else { return }
+                        do {
+                            guard let data = try await item.loadTransferable(type: Data.self),
+                                  let uiImage = UIImage(data: data),
+                                  let compressed = uiImage.jpegData(compressionQuality: 0.78) else {
+                                store.reportPhotoError("That image could not be read. Try another photo.")
+                                return
+                            }
+                            store.selectPhoto(compressed, preview: Image(uiImage: uiImage))
+                        } catch {
+                            store.reportPhotoError("That image could not be read. Try another photo.")
+                        }
+                    }
+                }
+                .sheet(isPresented: $store.cameraPresented) {
+                    CameraPicker { image in
+                        store.cameraPresented = false
+                        guard let compressed = image.jpegData(compressionQuality: 0.78) else {
+                            store.reportPhotoError("The camera image could not be prepared. Try again.")
+                            return
+                        }
+                        store.selectPhoto(compressed, preview: Image(uiImage: image))
+                    } onCancel: {
+                        store.cameraPresented = false
+                    }
+                }
+                if let photoError = store.photoError {
+                    Label(photoError, systemImage: "exclamationmark.triangle.fill")
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .foregroundStyle(PetverseTheme.coral)
+                        .padding(.top, 10)
+                }
+                if let generationError = store.generationError {
+                    Label(generationError, systemImage: "exclamationmark.triangle.fill")
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .foregroundStyle(PetverseTheme.coral)
+                        .padding(.top, 10)
+                }
+                PrimaryButton(title: "Generate digital avatar", systemImage: "sparkles") { store.beginGeneration() }
                     .padding(.top, 12)
                 Button("Use a preset template") { store.useTemplate() }
                     .font(.system(size: 14, weight: .semibold, design: .rounded))
@@ -134,6 +171,23 @@ struct StepHeader: View {
             Text(title).font(.system(size: 31, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
             Text(subtitle).font(.system(size: 15, design: .rounded)).foregroundStyle(PetverseTheme.ink.opacity(0.62)).lineSpacing(3)
         }
+    }
+}
+
+struct CaptureChoice: View {
+    let title: String
+    let icon: String
+    let tint: Color
+
+    var body: some View {
+        VStack(spacing: 9) {
+            Image(systemName: icon).font(.system(size: 22, weight: .bold)).foregroundStyle(tint)
+            Text(title).font(.system(size: 13, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 15)
+        .background(.white.opacity(0.86), in: RoundedRectangle(cornerRadius: 17, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 17).stroke(tint.opacity(0.28), lineWidth: 1.5))
     }
 }
 

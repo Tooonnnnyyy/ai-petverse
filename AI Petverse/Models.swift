@@ -62,17 +62,17 @@ enum PetStyle: String, CaseIterable, Codable, Identifiable {
 
     var title: String {
         switch self {
-        case .sunny: return "Sunlit Soul"
-        case .midnight: return "Midnight Muse"
-        case .candy: return "Candy Comet"
+        case .sunny: return "Pixel Grove"
+        case .midnight: return "Neon Night"
+        case .candy: return "Candy Arcade"
         }
     }
 
     var subtitle: String {
         switch self {
-        case .sunny: return "Warm, playful, golden"
-        case .midnight: return "Calm, curious, cosmic"
-        case .candy: return "Bright, bold, sweet"
+        case .sunny: return "Warm farm-day glow"
+        case .midnight: return "Cosmic arcade calm"
+        case .candy: return "Y2K sparkle pop"
         }
     }
 

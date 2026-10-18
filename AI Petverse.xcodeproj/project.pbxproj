@@ -18,6 +18,24 @@
 		A00000000000000000000209 /* AI_PetverseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000112 /* AI_PetverseTests.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A00000000000000000000401 /* Proxy for AI Petverse */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A00000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A00000000000000000000010;
+			remoteInfo = "AI Petverse";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXTargetDependency section */
+		A00000000000000000000402 /* AI Petverse dependency */ = {
+			isa = PBXTargetDependency;
+			target = A00000000000000000000010 /* AI Petverse */;
+			targetProxy = A00000000000000000000401 /* Proxy for AI Petverse */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXFileReference section */
 		A00000000000000000000101 /* AI_PetverseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AI_PetverseApp.swift; sourceTree = "<group>"; };
 		A00000000000000000000102 /* AppStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStore.swift; sourceTree = "<group>"; };
@@ -123,6 +141,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				A00000000000000000000402 /* AI Petverse dependency */,
 			);
 			name = "AI PetverseTests";
 			productName = "AI PetverseTests";
@@ -205,6 +224,7 @@
 		A00000000000000000000030 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
@@ -217,6 +237,7 @@
 		A00000000000000000000031 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
@@ -229,9 +250,11 @@
 		A00000000000000000000032 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = "AI Petverse/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tony.aipetverse;
@@ -245,6 +268,7 @@
 		A00000000000000000000033 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -261,6 +285,8 @@
 		A00000000000000000000034 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -274,6 +300,8 @@
 		A00000000000000000000035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;

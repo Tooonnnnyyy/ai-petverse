@@ -1,5 +1,6 @@
 import XCTest
-import UIKit
+import ImageIO
+import UniformTypeIdentifiers
 @testable import PetverseApp
 
 private struct FailingGenerationService: AvatarGenerationService {
@@ -38,20 +39,65 @@ final class AI_PetverseTests: XCTestCase {
     }
 
     func testLocalRendererCreatesDistinctPixelPNGPerStyle() throws {
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 96, height: 64))
-        let source = renderer.jpegData(withCompressionQuality: 0.9) { context in
-            UIColor(red: 0.18, green: 0.52, blue: 0.84, alpha: 1).setFill()
-            context.fill(CGRect(x: 0, y: 0, width: 96, height: 64))
-            UIColor.white.setFill()
-            context.fill(CGRect(x: 24, y: 16, width: 48, height: 32))
-        }
+        let source = try makeFixturePNG(width: 96, height: 64)
 
         let sunny = try PixelAvatarRenderer.render(sourceImageData: source, style: .sunny)
         let midnight = try PixelAvatarRenderer.render(sourceImageData: source, style: .midnight)
         XCTAssertNotEqual(sunny, source)
         XCTAssertNotEqual(sunny, midnight)
-        XCTAssertEqual(UIImage(data: sunny)?.size, CGSize(width: 576, height: 576))
-        XCTAssertEqual(UIImage(data: midnight)?.size, CGSize(width: 576, height: 576))
+        let sunnyDimensions = try imageDimensions(sunny)
+        let midnightDimensions = try imageDimensions(midnight)
+        XCTAssertEqual(sunnyDimensions.width, 576)
+        XCTAssertEqual(sunnyDimensions.height, 576)
+        XCTAssertEqual(midnightDimensions.width, 576)
+        XCTAssertEqual(midnightDimensions.height, 576)
+    }
+
+    private func makeFixturePNG(width: Int, height: Int) throws -> Data {
+        var pixels = [UInt8](repeating: 0, count: width * height * 4)
+        for y in 0..<height {
+            for x in 0..<width {
+                let index = (y * width + x) * 4
+                let isWhite = x >= 24 && x < 72 && y >= 16 && y < 48
+                pixels[index] = isWhite ? 255 : 46
+                pixels[index + 1] = isWhite ? 255 : 133
+                pixels[index + 2] = isWhite ? 255 : 214
+                pixels[index + 3] = 255
+            }
+        }
+        guard let context = CGContext(
+            data: &pixels,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: width * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ), let image = context.makeImage() else {
+            throw AvatarGenerationError.providerUnavailable
+        }
+        let output = NSMutableData()
+        guard let destination = CGImageDestinationCreateWithData(output, UTType.png.identifier as CFString, 1, nil) else {
+            throw AvatarGenerationError.providerUnavailable
+        }
+        CGImageDestinationAddImage(destination, image, nil)
+        guard CGImageDestinationFinalize(destination) else {
+            throw AvatarGenerationError.providerUnavailable
+        }
+        return output as Data
+    }
+
+    private struct ImageDimensions {
+        let width: Int
+        let height: Int
+    }
+
+    private func imageDimensions(_ data: Data) throws -> ImageDimensions {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+              let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
+            throw AvatarGenerationError.invalidSourceImage
+        }
+        return ImageDimensions(width: image.width, height: image.height)
     }
 
     func testLegacyProfileWithoutAvatarStillDecodes() throws {

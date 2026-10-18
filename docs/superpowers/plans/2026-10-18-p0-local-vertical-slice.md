@@ -39,9 +39,9 @@
 - `AppStore` exposes `screen`, `pet`, `draft`, `startCreation()`, `selectPhoto(_:)`, `beginGeneration()`, `savePet()`, `performInteraction()`, and `deletePet()`.
 - The test target imports no UI framework and can exercise deterministic domain behavior.
 
-- [ ] Create a minimal app target with iOS 17 deployment settings and a test target.
-- [ ] Add the app entry point and a root `ContentView` placeholder.
-- [ ] Add build instructions and the local-first/privacy boundary to README.
+- [x] Create a minimal app target with iOS 17 deployment settings and a test target.
+- [x] Add the app entry point and a root `ContentView` placeholder.
+- [x] Add build instructions and the local-first/privacy boundary to README.
 - [ ] Build for a generic iOS destination to prove the project opens and compiles.
 
 ### Task 2: Add deterministic domain models and persistence
@@ -59,9 +59,9 @@
 - `PetState.interact(at:)` deterministically clamps values to 0...100 and returns a short reaction.
 - `LocalPetStore` persists one `PetProfile` and one optional source image in `UserDefaults`/Application Support.
 
-- [ ] Write tests for deterministic interaction, value clamping, encoding/decoding, and deletion.
+- [x] Write tests for deterministic interaction, value clamping, encoding/decoding, and deletion.
 - [ ] Run the tests and confirm they fail before implementation.
-- [ ] Implement models and local persistence.
+- [x] Implement models and local persistence.
 - [ ] Run the tests and confirm they pass.
 
 ### Task 3: Implement the P0 creation flow
@@ -78,10 +78,10 @@
 - The mock generator transitions from loading to result and exposes a retry/fallback action.
 - The fallback template remains usable if photo selection is skipped or generation fails.
 
-- [ ] Implement onboarding and photo input with camera/photo-library explanation.
-- [ ] Implement loading, mock generation, failure/retry, and preset fallback states.
-- [ ] Implement result and customization screens with style, color, name, and personality controls.
-- [ ] Persist the saved pet and route to the home scene.
+- [x] Implement onboarding and photo input with camera/photo-library explanation.
+- [x] Implement loading, mock generation, failure/retry, and preset fallback states.
+- [x] Implement result and customization screens with style, color, name, and personality controls.
+- [x] Persist the saved pet and route to the home scene.
 
 ### Task 4: Implement interaction, export, and deletion
 
@@ -98,10 +98,10 @@
 - `AppStore.deletePet()) removes the local profile and source image, then returns to onboarding.
 - Share copy states that opening the sheet is not proof of external publishing.
 
-- [ ] Add the pet home scene with mood, energy, bond, and one “Play together” action.
-- [ ] Add a shareable local image card and share sheet presentation.
-- [ ] Add delete confirmation and local data deletion.
-- [ ] Add tests for interaction and delete/recreate behavior.
+- [x] Add the pet home scene with mood, energy, bond, and one “Play together” action.
+- [x] Add a shareable local image card and share sheet presentation.
+- [x] Add delete confirmation and local data deletion.
+- [x] Add tests for interaction and delete/recreate behavior.
 
 ### Task 5: Verify and document
 
@@ -111,7 +111,7 @@
 
 - [ ] Run `xcodebuild -project "AI Petverse.xcodeproj" -scheme "AI Petverse" -sdk iphonesimulator -destination "generic/platform=iOS Simulator" build`.
 - [ ] Run the XCTest target when a simulator destination is available; otherwise record the simulator service blocker and run a compile-only build.
-- [ ] Inspect the project for secrets and verify only local mock generation is present.
+- [x] Inspect the project for secrets and verify only local mock generation is present.
 - [ ] Append a dated Session record to the canonical PRD describing implemented, tested, unverified, and next-step items.
 - [ ] Record that the simulator UI walkthrough remains unverified until CoreSimulatorService is available.
 

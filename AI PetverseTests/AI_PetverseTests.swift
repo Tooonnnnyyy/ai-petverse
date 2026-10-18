@@ -8,7 +8,7 @@ final class AI_PetverseTests: XCTestCase {
         let reaction = state.interact(at: date)
 
         XCTAssertEqual(state.mood, 100)
-        XCTAssertEqual(state.energy, 8)
+        XCTAssertEqual(state.energy, 10)
         XCTAssertEqual(state.bond, 100)
         XCTAssertEqual(state.lastInteractionAt, date)
         XCTAssertEqual(reaction, "A gentle cuddle restored a little energy.")

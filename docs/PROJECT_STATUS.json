@@ -6,7 +6,6 @@
   "updated_at": "2026-10-18",
   "source": {
     "default_branch": "main",
-    "candidate_commit": "5098c4be8dd874fc9793ce2916f290c9326b22c1",
     "visibility": "public",
     "stack": [
       "Swift 6",
@@ -15,7 +14,8 @@
       "PhotosUI",
       "UIKit",
       "XCTest"
-    ]
+    ],
+    "renderer_verified_commit": "7d6a89a6549963b71e686a2b1655387f2fa2390c"
   },
   "priority": {
     "P0": "Photo/template to avatar preview, scene selection, Play Together, data safety, and delivery checks",
@@ -52,26 +52,28 @@
         "PR #3: https://github.com/Tooonnnnyyy/ai-petverse/pull/3",
         "main protection requires review and Build and test"
       ],
-      "reason": "Owner review is still required before merge",
-      "next_action": "Review current PR diffs and merge only under owner policy"
+      "reason": "PR #2 is stacked on PR #3; one independent approval is enforced but the repository currently has only the owner",
+      "next_action": "Obtain independent review or an explicit owner policy decision; merge #3 before retargeting #2 to main"
     },
     "actions": {
       "state": "pending",
       "checked_at": "2026-10-18",
       "evidence": [
-        "Renderer fix run 39178237304 passed for ed5d4c2",
-        "Current governance candidate run 39179325275 is linked from PR #2 and is still pending"
+        "https://github.com/Tooonnnnyyy/ai-petverse/actions/runs/39178649298 (7d6a89a, success)",
+        "Check the current head of PR #2; documentation commits require their own run"
       ],
-      "next_action": "Wait for PR #2 Build and test, then record its final conclusion"
+      "next_action": "Verify PR #2 head checks before merge; do not create a status-only commit to record its own SHA",
+      "reason": "Current governance branch head requires its own check; the renderer candidate passed"
     },
     "release_rollback": {
-      "state": "pass",
+      "state": "pending",
       "checked_at": "2026-10-18",
       "evidence": [
         "backup/pre-3d-mvp",
         "mvp-2d-stable-58df1bf"
       ],
-      "next_action": "Draft a release only after owner review and tested source selection"
+      "next_action": "Draft a release only after owner review and tested source selection",
+      "reason": "Recovery refs exist; source-only release draft is being prepared"
     },
     "packages": {
       "state": "not_applicable",
@@ -96,7 +98,8 @@
       "state": "pending",
       "checked_at": "2026-10-18",
       "evidence": [
-        "Current files contain no credentials, user media, or simulator identifiers"
+        "No new app media in this round; new protocol text and Git identity reviewed",
+        "Earlier public commit metadata includes personal email; earlier documentation history includes local paths"
       ],
       "reason": "Older public history contains local path metadata and personal author email",
       "next_action": "Report metadata exposure; do not rewrite public history without explicit direction"

@@ -1,6 +1,5 @@
 import XCTest
-import ImageIO
-import UniformTypeIdentifiers
+import UIKit
 @testable import PetverseApp
 
 private struct FailingGenerationService: AvatarGenerationService {
@@ -39,42 +38,20 @@ final class AI_PetverseTests: XCTestCase {
     }
 
     func testLocalRendererCreatesDistinctPixelPNGPerStyle() throws {
-        let source = try makeFixturePNG(width: 96, height: 64)
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 96, height: 64))
+        let source = renderer.jpegData(withCompressionQuality: 0.9) { context in
+            UIColor(red: 0.18, green: 0.52, blue: 0.84, alpha: 1).setFill()
+            context.fill(CGRect(x: 0, y: 0, width: 96, height: 64))
+            UIColor.white.setFill()
+            context.fill(CGRect(x: 24, y: 16, width: 48, height: 32))
+        }
 
         let sunny = try PixelAvatarRenderer.render(sourceImageData: source, style: .sunny)
         let midnight = try PixelAvatarRenderer.render(sourceImageData: source, style: .midnight)
         XCTAssertNotEqual(sunny, source)
         XCTAssertNotEqual(sunny, midnight)
-        let sunnyDimensions = try imageDimensions(sunny)
-        let midnightDimensions = try imageDimensions(midnight)
-        XCTAssertEqual(sunnyDimensions.width, 576)
-        XCTAssertEqual(sunnyDimensions.height, 576)
-        XCTAssertEqual(midnightDimensions.width, 576)
-        XCTAssertEqual(midnightDimensions.height, 576)
-    }
-
-    private func makeFixturePNG(width: Int, height: Int) throws -> Data {
-        // A tiny embedded PNG keeps this test independent of UIKit/Core Graphics
-        // context setup on headless CI simulators. The renderer still exercises
-        // its own ImageIO/Core Graphics decode and output path.
-        let encoded = "iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAEklEQVR4nGPQa732HxkzkC4AAEtvKIH633wCAAAAAElFTkSuQmCC"
-        guard let data = Data(base64Encoded: encoded) else {
-            throw AvatarGenerationError.invalidSourceImage
-        }
-        return data
-    }
-
-    private struct ImageDimensions {
-        let width: Int
-        let height: Int
-    }
-
-    private func imageDimensions(_ data: Data) throws -> ImageDimensions {
-        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
-              let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
-            throw AvatarGenerationError.invalidSourceImage
-        }
-        return ImageDimensions(width: image.width, height: image.height)
+        XCTAssertEqual(UIImage(data: sunny)?.size, CGSize(width: 576, height: 576))
+        XCTAssertEqual(UIImage(data: midnight)?.size, CGSize(width: 576, height: 576))
     }
 
     func testLegacyProfileWithoutAvatarStillDecodes() throws {

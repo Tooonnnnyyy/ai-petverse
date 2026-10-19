@@ -115,36 +115,32 @@ enum PixelAvatarRenderer {
         let width = workingSide
         let height = workingSide
         var pixels = [UInt8](repeating: 0, count: width * height * 4)
-        guard let image = pixels.withUnsafeMutableBytes({ rawBuffer -> CGImage? in
-            guard let baseAddress = rawBuffer.baseAddress,
-                  let context = CGContext(
-                      data: baseAddress,
-                      width: width,
-                      height: height,
-                      bitsPerComponent: 8,
-                      bytesPerRow: width * 4,
-                      space: CGColorSpaceCreateDeviceRGB(),
-                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-                  ) else {
-                return nil
-            }
-            context.interpolationQuality = .none
-            context.draw(source, in: CGRect(x: 0, y: 0, width: width, height: height))
+        guard let context = CGContext(
+            data: &pixels,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: width * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else {
+            throw AvatarGenerationError.providerUnavailable
+        }
+        context.interpolationQuality = .none
+        context.draw(source, in: CGRect(x: 0, y: 0, width: width, height: height))
 
-            let bytes = rawBuffer.bindMemory(to: UInt8.self)
-            for index in stride(from: 0, to: bytes.count, by: 4) {
-                let transformed = transform(
-                    red: bytes[index],
-                    green: bytes[index + 1],
-                    blue: bytes[index + 2],
-                    style: style
-                )
-                bytes[index] = transformed.red
-                bytes[index + 1] = transformed.green
-                bytes[index + 2] = transformed.blue
-            }
-            return context.makeImage()
-        }) else {
+        for index in stride(from: 0, to: pixels.count, by: 4) {
+            let transformed = transform(
+                red: pixels[index],
+                green: pixels[index + 1],
+                blue: pixels[index + 2],
+                style: style
+            )
+            pixels[index] = transformed.red
+            pixels[index + 1] = transformed.green
+            pixels[index + 2] = transformed.blue
+        }
+        guard let image = context.makeImage() else {
             throw AvatarGenerationError.providerUnavailable
         }
         return image
@@ -152,23 +148,20 @@ enum PixelAvatarRenderer {
 
     private static func upscale(_ source: CGImage) throws -> CGImage {
         var pixels = [UInt8](repeating: 0, count: outputSide * outputSide * 4)
-        guard let image = pixels.withUnsafeMutableBytes({ rawBuffer -> CGImage? in
-            guard let baseAddress = rawBuffer.baseAddress,
-                  let context = CGContext(
-                      data: baseAddress,
-                      width: outputSide,
-                      height: outputSide,
-                      bitsPerComponent: 8,
-                      bytesPerRow: outputSide * 4,
-                      space: CGColorSpaceCreateDeviceRGB(),
-                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-                  ) else {
-                return nil
-            }
-            context.interpolationQuality = .none
-            context.draw(source, in: CGRect(x: 0, y: 0, width: outputSide, height: outputSide))
-            return context.makeImage()
-        }) else {
+        guard let context = CGContext(
+            data: &pixels,
+            width: outputSide,
+            height: outputSide,
+            bitsPerComponent: 8,
+            bytesPerRow: outputSide * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else {
+            throw AvatarGenerationError.providerUnavailable
+        }
+        context.interpolationQuality = .none
+        context.draw(source, in: CGRect(x: 0, y: 0, width: outputSide, height: outputSide))
+        guard let image = context.makeImage() else {
             throw AvatarGenerationError.providerUnavailable
         }
         return image

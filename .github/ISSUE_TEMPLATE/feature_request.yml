@@ -1,0 +1,34 @@
+name: Feature request
+description: Propose a user-visible capability with a clear outcome.
+title: "feat: "
+labels: ["feature"]
+body:
+  - type: textarea
+    id: user_result
+    attributes:
+      label: User result
+      description: Who needs this, in what situation, and what should they be able to finish?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Smallest useful scope
+      description: Define the P0 slice and what is explicitly deferred.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List observable pass/fail outcomes.
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks and dependencies
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or references

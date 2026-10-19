@@ -28,11 +28,15 @@ The project includes camera and photo-library usage descriptions in `AI Petverse
 
 ## Verification commands
 
+Destination names are Xcode-installation dependent. Inspect available devices with `xcodebuild -showdestinations` or `xcrun simctl list devices available`; use an explicit device ID when a model name or `OS=latest` does not resolve.
+
+For the currently available iPhone 17 Pro simulator in this workspace:
+
 ```bash
 xcodebuild -project "AI Petverse.xcodeproj" \
   -scheme "AI Petverse" \
   -sdk iphonesimulator \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -destination 'id=57B9919A-B4C2-4503-826D-0C2FD093330B' \
   CODE_SIGNING_ALLOWED=NO test
 ```
 

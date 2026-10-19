@@ -4,7 +4,7 @@
 [![Swift](https://img.shields.io/badge/Swift-6.0%2B-F05138?logo=swift&logoColor=white)](https://www.swift.org/)
 [![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-007AFF)](https://developer.apple.com/xcode/swiftui/)
 [![3D](https://img.shields.io/badge/3D-SceneKit-8E8E93)](https://developer.apple.com/scenekit/)
-[![Tests](https://img.shields.io/badge/tests-11%20passing-34A853)](AI%20PetverseTests/AI_PetverseTests.swift)
+[![iOS verification](https://github.com/Tooonnnnyyy/ai-petverse/actions/workflows/ios.yml/badge.svg)](https://github.com/Tooonnnnyyy/ai-petverse/actions/workflows/ios.yml)
 [![License](https://img.shields.io/badge/license-MIT-6366F1)](LICENSE)
 
 **English · [中文](docs/README.zh-CN.md)**
@@ -61,7 +61,7 @@ xcodebuild -project "AI Petverse.xcodeproj" \
   CODE_SIGNING_ALLOWED=NO test
 ```
 
-The current verified result is **11 tests passed, 0 failed**. For a compile-only build, replace `test` with `build` and use `-destination 'generic/platform=iOS Simulator'`.
+Local verification recorded **11 tests passed, 0 failed**. Remote CI evidence is commit-specific; see the Actions badge and project status record. For a compile-only build, replace `test` with `build` and use `-destination 'generic/platform=iOS Simulator'`.
 
 ## Repository map
 
@@ -72,9 +72,11 @@ The current verified result is **11 tests passed, 0 failed**. For a compile-only
 - [`docs/PROJECT_GOVERNANCE.md`](docs/PROJECT_GOVERNANCE.md) — public-repository release and branch policy.
 - [`docs/evidence/`](docs/evidence) — local Simulator screenshots used for review.
 
+For future agents, start with [`AGENTS.md`](AGENTS.md), the [project playbook](docs/GITHUB_PROJECT_PLAYBOOK.md) and the [status record](docs/PROJECT_STATUS.json).
+
 ## Versioning and rollback
 
-The current immersive 3D release is commit `2c60530`. The earlier stable local-avatar checkpoint remains available as:
+The immersive 3D source checkpoint is commit `2c60530`; it is not an App Store release. The earlier stable local-avatar checkpoint remains available as:
 
 - Branch: `backup/pre-3d-mvp`
 - Tag: `mvp-2d-stable-58df1bf`

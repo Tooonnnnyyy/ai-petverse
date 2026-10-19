@@ -15,7 +15,8 @@ This page records the repository operating rules so they do not need to be recon
 - `main` is the review and release branch.
 - New work starts on a feature branch and enters `main` through a pull request.
 - Force-pushes and branch deletion are disabled for `main`.
-- Pull requests require one approving review and conversation resolution. The solo repository owner may use the documented administrator bypass when a second maintainer is unavailable.
+- `Build and test` is a required status check from the GitHub Actions app, with strict base checks. Read live settings before each merge.
+- Pull requests require one approving review and conversation resolution. Administrators are also subject to these rules. Only one collaborator currently exists; self-authored PRs therefore need another authorized reviewer or an explicit owner decision on a solo-maintainer policy. Do not disable protection to merge.
 - Keep a dated rollback branch or tag before a large visual or architectural change.
 - The current fallback references are `backup/pre-3d-mvp` and `mvp-2d-stable-58df1bf`.
 

@@ -1,0 +1,115 @@
+{
+  "protocol": "github-project-v1",
+  "protocol_version": 1,
+  "protocol_source": "https://github.com/Tooonnnnyyy/knowledge-base/tree/docs/github-operating-protocol",
+  "project": "Tooonnnnyyy/ai-petverse",
+  "updated_at": "2026-10-19",
+  "source": {
+    "default_branch": "main",
+    "visibility": "public",
+    "stack": [
+      "Swift 6",
+      "SwiftUI",
+      "SceneKit",
+      "PhotosUI",
+      "UIKit",
+      "XCTest"
+    ],
+    "renderer_verified_commit": "7d6a89a6549963b71e686a2b1655387f2fa2390c"
+  },
+  "priority": {
+    "P0": "Photo/template to avatar preview, scene selection, Play Together, data safety, and delivery checks",
+    "P1": "Material improvement to the usable core, including pet resemblance, feedback, accessibility, performance, or scene quality",
+    "P2": "Deferred expansion or polish such as extra scenes, multiplayer, and optional distribution channels"
+  },
+  "checks": {
+    "repository": {
+      "state": "pass",
+      "checked_at": "2026-10-18",
+      "evidence": [
+        "README.md",
+        "docs/PROJECT_SETUP.md",
+        "AGENTS.md",
+        "public repository settings"
+      ],
+      "next_action": "Recheck drift-prone settings before release"
+    },
+    "issues_projects": {
+      "state": "pass",
+      "checked_at": "2026-10-19",
+      "evidence": [
+        "Project #3: https://github.com/users/Tooonnnnyyy/projects/3",
+        "Priority field P0/P1/P2 and Evidence field created",
+        "Issue #1, PR #2 and PR #3 added with current status values"
+      ],
+      "next_action": "Keep Project fields synchronized with Issue/PR state"
+    },
+    "pull_requests": {
+      "state": "pending",
+      "checked_at": "2026-10-18",
+      "evidence": [
+        "PR #2: https://github.com/Tooonnnnyyy/ai-petverse/pull/2",
+        "PR #3: https://github.com/Tooonnnnyyy/ai-petverse/pull/3",
+        "main protection requires review and Build and test"
+      ],
+      "reason": "PR #2 is stacked on PR #3; one independent approval is enforced but the repository currently has only the owner",
+      "next_action": "Obtain independent review or an explicit owner policy decision; merge #3 before retargeting #2 to main"
+    },
+    "actions": {
+      "state": "pass",
+      "checked_at": "2026-10-19",
+      "evidence": [
+        "Renderer fix run 39178237304 passed for 7d6a89a",
+        "Governance PR run 39180082559 passed for b74dc18"
+      ],
+      "next_action": "Recheck the matching run after any new commit"
+    },
+    "release_rollback": {
+      "state": "pending",
+      "checked_at": "2026-10-18",
+      "evidence": [
+        "backup/pre-3d-mvp",
+        "mvp-2d-stable-58df1bf"
+      ],
+      "next_action": "Draft a release only after owner review and tested source selection",
+      "reason": "Recovery refs exist; source-only release draft is being prepared"
+    },
+    "packages": {
+      "state": "not_applicable",
+      "checked_at": "2026-10-18",
+      "evidence": [
+        "Standalone iOS app; no reusable library/container registry output"
+      ],
+      "reason": "Simulator/build artifacts are not GitHub Packages",
+      "next_action": "Reassess only if a distributable package is introduced"
+    },
+    "retrieval": {
+      "state": "pass",
+      "checked_at": "2026-10-18",
+      "evidence": [
+        "AGENTS.md",
+        "docs/GITHUB_PROJECT_PLAYBOOK.md",
+        "docs/GITHUB_AGENT_ENTRY.md in the Knowledge Base review branch"
+      ],
+      "next_action": "Keep protocol source revision synchronized after PR #4 merges"
+    },
+    "public_security": {
+      "state": "pending",
+      "checked_at": "2026-10-18",
+      "evidence": [
+        "No new app media in this round; new protocol text and Git identity reviewed",
+        "Earlier public commit metadata includes personal email; earlier documentation history includes local paths"
+      ],
+      "reason": "Older public history contains local path metadata and personal author email",
+      "next_action": "Report metadata exposure; do not rewrite public history without explicit direction"
+    }
+  },
+  "rollback": [
+    "backup/pre-3d-mvp",
+    "mvp-2d-stable-58df1bf"
+  ],
+  "open": [
+    "Owner review for PR #2 and PR #3",
+    "P1 photo-derived 3D pet remains unimplemented"
+  ]
+}

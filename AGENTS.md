@@ -1,6 +1,8 @@
 # AI Petverse agent entry
 
-Before changing this repository, read the project facts in [`docs/PROJECT_SETUP.md`](docs/PROJECT_SETUP.md) and [`docs/PROJECT_GOVERNANCE.md`](docs/PROJECT_GOVERNANCE.md), then follow the reusable [GitHub project protocol](https://github.com/Tooonnnnyyy/knowledge-base/blob/main/content/posts/github-project-bootstrap-protocol.md).
+Before changing this repository, read the project facts in [`docs/PROJECT_SETUP.md`](docs/PROJECT_SETUP.md) and [`docs/PROJECT_GOVERNANCE.md`](docs/PROJECT_GOVERNANCE.md), then follow the reusable [GitHub project protocol](https://github.com/Tooonnnnyyy/knowledge-base/blob/docs/github-operating-protocol/docs/GITHUB_AGENT_ENTRY.md).
+
+Also read [`docs/GITHUB_PROJECT_PLAYBOOK.md`](docs/GITHUB_PROJECT_PLAYBOOK.md) and maintain [`docs/PROJECT_STATUS.json`](docs/PROJECT_STATUS.json). The shared protocol is currently available on its public review branch; check for a merged revision before switching the source URL.
 
 ## Start-of-task checklist
 

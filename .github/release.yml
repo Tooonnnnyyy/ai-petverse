@@ -1,0 +1,19 @@
+changelog:
+  categories:
+    - title: User-facing changes
+      labels:
+        - enhancement
+        - feature
+    - title: Fixes
+      labels:
+        - bug
+        - P0
+        - P1
+    - title: Documentation and maintenance
+      labels:
+        - documentation
+        - maintenance
+        - P2
+    - title: Other changes
+      labels:
+        - '*'

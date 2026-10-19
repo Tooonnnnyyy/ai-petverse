@@ -1,0 +1,47 @@
+name: Bug report
+description: Report a reproducible user-visible failure.
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use one report for one root-cause candidate. Do not attach private photos, tokens, or device identifiers.
+  - type: textarea
+    id: trigger
+    attributes:
+      label: Trigger and reproduction
+      description: What did you tap or run? Give the smallest repeatable sequence.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: iOS version, device/simulator, app commit
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Link a redacted screenshot, log, test result, or Actions run.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: What observation closes this issue?
+    validations:
+      required: true

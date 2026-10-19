@@ -35,14 +35,14 @@
       "next_action": "Recheck drift-prone settings before release"
     },
     "issues_projects": {
-      "state": "blocked",
-      "checked_at": "2026-10-18",
+      "state": "pass",
+      "checked_at": "2026-10-19",
       "evidence": [
-        "Issue #1: https://github.com/Tooonnnnyyy/ai-petverse/issues/1",
-        "P0 label added"
+        "Project #3: https://github.com/users/Tooonnnnyyy/projects/3",
+        "Priority field P0/P1/P2 and Evidence field created",
+        "Issue #1, PR #2 and PR #3 added with current status values"
       ],
-      "reason": "GitHub CLI token lacks read:project/project scope; no Project board is claimed",
-      "next_action": "Authorize gh project scope, then create P0/P1/P2 board and link Issue #1"
+      "next_action": "Keep Project fields synchronized with Issue/PR state"
     },
     "pull_requests": {
       "state": "pending",
@@ -60,7 +60,7 @@
       "checked_at": "2026-10-18",
       "evidence": [
         "Renderer fix run 39178237304 passed for ed5d4c2",
-        "Current governance candidate run is linked from PR #2 and is still pending"
+        "Current governance candidate run 39179325275 is linked from PR #2 and is still pending"
       ],
       "next_action": "Wait for PR #2 Build and test, then record its final conclusion"
     },

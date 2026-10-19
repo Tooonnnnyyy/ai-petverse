@@ -13,6 +13,7 @@ The shared protocol is on a public review branch. Website publication is separat
 - Project-specific setup: [`PROJECT_SETUP.md`](PROJECT_SETUP.md)
 - Project-specific governance: [`PROJECT_GOVERNANCE.md`](PROJECT_GOVERNANCE.md)
 - Public Wiki: https://github.com/Tooonnnnyyy/ai-petverse/wiki/Project-Governance-&-Setup
+- Project board: https://github.com/users/Tooonnnnyyy/projects/3
 
 ## Repeatable agent start
 

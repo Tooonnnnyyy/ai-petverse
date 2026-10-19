@@ -1,0 +1,30 @@
+{
+  "protocol": "github-project-v1",
+  "protocol_version": 1,
+  "protocol_source": "https://github.com/Tooonnnnyyy/knowledge-base/tree/docs/github-operating-protocol",
+  "project": "Tooonnnnyyy/ai-petverse",
+  "updated_at": "2026-10-18",
+  "source": {
+    "default_branch": "main",
+    "candidate_commit": "7d6a89a6549963b71e686a2b1655387f2fa2390c",
+    "visibility": "public",
+    "stack": ["Swift 6", "SwiftUI", "SceneKit", "PhotosUI", "UIKit", "XCTest"]
+  },
+  "priority": {
+    "P0": "Photo/template to avatar preview, scene selection, Play Together, data safety, and delivery checks",
+    "P1": "Material improvement to the usable core, including pet resemblance, feedback, accessibility, performance, or scene quality",
+    "P2": "Deferred expansion or polish such as extra scenes, multiplayer, and optional distribution channels"
+  },
+  "checks": {
+    "repository": { "state": "pass", "checked_at": "2026-10-18", "evidence": ["README.md", "docs/PROJECT_SETUP.md", "AGENTS.md", "public repository settings"], "next_action": "Recheck drift-prone settings before release" },
+    "issues_projects": { "state": "blocked", "checked_at": "2026-10-18", "evidence": ["Issue #1: https://github.com/Tooonnnnyyy/ai-petverse/issues/1", "P0 label added"], "reason": "GitHub CLI token lacks read:project/project scope; no Project board is claimed", "next_action": "Authorize gh project scope, then create P0/P1/P2 board and link Issue #1" },
+    "pull_requests": { "state": "pending", "checked_at": "2026-10-18", "evidence": ["PR #2: https://github.com/Tooonnnnyyy/ai-petverse/pull/2", "PR #3: https://github.com/Tooonnnnyyy/ai-petverse/pull/3", "main protection requires review and Build and test"], "reason": "Owner review is still required before merge", "next_action": "Review current PR diffs and merge only under owner policy" },
+    "actions": { "state": "pass", "checked_at": "2026-10-18", "evidence": ["Renderer fix run 39178237304 passed for ed5d4c2", "Current candidate run 39178649298 is commit-specific and must be rechecked before merge"], "next_action": "Wait for current candidate run and record its final conclusion" },
+    "release_rollback": { "state": "pass", "checked_at": "2026-10-18", "evidence": ["backup/pre-3d-mvp", "mvp-2d-stable-58df1bf"], "next_action": "Draft a release only after owner review and tested source selection" },
+    "packages": { "state": "not_applicable", "checked_at": "2026-10-18", "evidence": ["Standalone iOS app; no reusable library/container registry output"], "reason": "Simulator/build artifacts are not GitHub Packages", "next_action": "Reassess only if a distributable package is introduced" },
+    "retrieval": { "state": "pass", "checked_at": "2026-10-18", "evidence": ["AGENTS.md", "docs/GITHUB_PROJECT_PLAYBOOK.md", "docs/GITHUB_AGENT_ENTRY.md in the Knowledge Base review branch"], "next_action": "Keep protocol source revision synchronized after PR #4 merges" },
+    "public_security": { "state": "pending", "checked_at": "2026-10-18", "evidence": ["Current files contain no credentials, user media, or simulator identifiers"], "reason": "Older public history contains local path metadata and personal author email", "next_action": "Report metadata exposure; do not rewrite public history without explicit direction" }
+  },
+  "rollback": ["backup/pre-3d-mvp", "mvp-2d-stable-58df1bf"],
+  "open": ["Owner review for PR #2 and PR #3", "GitHub Projects authorization and board creation", "Current candidate Actions conclusion", "P1 photo-derived 3D pet remains unimplemented"]
+}

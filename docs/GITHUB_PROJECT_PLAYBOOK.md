@@ -1,6 +1,8 @@
 # GitHub project playbook
 
-This is the project-level entry point for the reusable workflow in the public Knowledge Base: [A Reusable GitHub Project Bootstrap Protocol](https://tooonnnnyyy.github.io/knowledge-base/notes/github-project-bootstrap-protocol/).
+This is the project-level entry point for the reusable workflow in the public Knowledge Base: [A Reusable GitHub Project Bootstrap Protocol](https://github.com/Tooonnnnyyy/knowledge-base/blob/docs/github-operating-protocol/content/posts/github-project-bootstrap-protocol.md).
+
+The shared protocol is on a public review branch. Website publication is separate. Read [`PROJECT_STATUS.json`](PROJECT_STATUS.json) for dated state, evidence and blockers.
 
 ## Current project map
 
@@ -26,8 +28,8 @@ Read the README and the two project docs before changing behavior. Search existi
 ## Priority and evidence
 
 - **P0:** user cannot complete photo/template → avatar preview → scene → Play Together; build or test is broken; data can be lost.
-- **P1:** core flow works but feedback, accessibility, performance, or scene quality is materially weak.
-- **P2:** polish, additional scenes, provider integration, 3D reconstruction, packaging or non-blocking documentation.
+- **P1:** core flow works but feedback, accessibility, performance, pet resemblance or scene quality is materially weak. The desired photo-derived 3D pet is still an unmet feature; provider/asset strategy requires its own acceptance evidence.
+- **P2:** polish, additional scenes, multiplayer or optional distribution channels.
 
 For every change record the user result, changed files, checks, remote/Actions evidence and remaining uncertainty. Local Simulator success does not prove physical-device installation, hosted AI generation, App Store distribution or live service behavior.
 
@@ -40,3 +42,9 @@ For every change record the user result, changed files, checks, remote/Actions e
 5. If the change is release-worthy, tag a known-good commit and write release notes. Do not call a local Simulator build an App Store release.
 6. Verify remote SHA, Actions result and any user-visible artifact separately.
 7. If the candidate is unacceptable, restore the documented tag/branch or revert with a new commit. Do not force-push `main`.
+
+## Releases and packages
+
+Use `.github/release.yml` for categorized notes. A draft is preparation, not a published release or signed install. Keep the version tied to an exact tested commit and describe the procedural 3D limitation. Packages is `not_applicable` for this standalone iOS app with no reusable library/container; simulator build artifacts and signed distribution are separate concerns.
+
+For a safe local rollback, create a new worktree at `mvp-2d-stable-58df1bf`. Do not reset a working tree with unsaved changes. For a deployed regression, create a revert PR, test it and verify the resulting version. Recovery tags are not backups of private device data.

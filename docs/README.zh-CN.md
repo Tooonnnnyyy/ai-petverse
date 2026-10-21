@@ -8,7 +8,7 @@ AI Petverse 是一个 iOS 优先的宠物数字伙伴原型：用户可以拍照
 
 - 使用相机或照片库输入，也可以使用预设模板快速体验。
 - 本地、确定性的头像预览；源照片保留在设备上。
-- 使用 SceneKit 程序化生成低多边形宠物，并直接放入 3D 世界。
+- 根据一组特征（物种、体型、耳朵、口鼻、尾巴、花色、颜色）生成体素宠物，用 RealityKit 渲染；宠物会自己在岛上走动，拖动可以旋转场景。
 - 两个可切换场景：**Pixel Grove**（体素农场）和 **Neon Arcade**（Y2K 霓虹街机）。
 - `Play together` 会让 3D 宠物跳跃，并更新 Mood、Energy、Bond。
 - 本地保存、删除、系统分享入口、取消、重试和互动冷却逻辑。
@@ -19,9 +19,9 @@ AI Petverse 是一个 iOS 优先的宠物数字伙伴原型：用户可以拍照
 
 | 层 | 技术 |
 | --- | --- |
-| App | Swift 6、Xcode project、iOS 17+ |
+| App | Swift 6、Xcode project、iOS 18+ |
 | UI | SwiftUI |
-| 3D 世界 | SceneKit、程序化低多边形几何体、正交相机 |
+| 3D 世界 | RealityKit、特征驱动的体素网格、无光照平面着色、正交相机 |
 | 输入 | PhotosUI、UIKit camera bridge |
 | 本地状态 | Codable models、UserDefaults persistence |
 | 导出 | UIKit `UIActivityViewController` share-sheet bridge |
@@ -33,7 +33,7 @@ AI Petverse 是一个 iOS 优先的宠物数字伙伴原型：用户可以拍照
 ### 要求
 
 - macOS 和 Xcode；当前 project settings 推荐使用 Xcode 27。
-- iOS 17 或更新版本的 Simulator。真机运行需要自己的 signing team 和 provisioning 配置。
+- iOS 18 或更新版本的 Simulator。真机运行需要自己的 signing team 和 provisioning 配置。
 - P0 不需要 backend、账号、API key、付费服务或 `.env` 文件。`.env` 已被 Git 忽略，为未来 provider 凭据预留安全边界。
 
 ### 打开项目
@@ -42,7 +42,7 @@ AI Petverse 是一个 iOS 优先的宠物数字伙伴原型：用户可以拍照
 open "AI Petverse.xcodeproj"
 ```
 
-在 Xcode 里选择 `AI Petverse` scheme 和 iOS 17+ Simulator，点击 Run。相机和照片库权限文案已经写入 `AI Petverse/Info.plist`。
+在 Xcode 里选择 `AI Petverse` scheme 和 iOS 18+ Simulator，点击 Run。相机和照片库权限文案已经写入 `AI Petverse/Info.plist`。
 
 ### 命令行测试
 
@@ -58,7 +58,7 @@ xcodebuild -project "AI Petverse.xcodeproj" \
 
 ## 仓库结构
 
-- [`AI Petverse/`](../AI%20Petverse) — SwiftUI screens、local store、SceneKit world builder 和 avatar preview seam。
+- [`AI Petverse/`](../AI%20Petverse) — SwiftUI screens、local store、体素宠物生成器、RealityKit 世界和 avatar preview seam。
 - [`AI PetverseTests/`](../AI%20PetverseTests) — model、persistence、generation、interaction、scene selection 测试。
 - [`docs/PROJECT_SETUP.md`](PROJECT_SETUP.md) — 环境、Simulator、签名和排错说明。
 - [`docs/RELEASE.md`](RELEASE.md) — TestFlight 和 App Store 发布流程。

@@ -203,7 +203,7 @@ struct ResultView: View {
                 StepHeader(step: "02", title: "Meet your first version", subtitle: "A playful starting point. You can tune the mood before saving.")
                 Spacer(minLength: 26)
                 VStack(spacing: 16) {
-                    PetWorldView(scene: store.draft.scene, style: store.draft.style, appearance: store.draft.appearance, allowsCameraControl: false)
+                    VoxelWorldView(scene: store.draft.scene, traits: store.draft.resolvedTraits, accessory: PetAccessory(appearance: store.draft.appearance), isInteractive: false)
                         .frame(height: 300)
                         .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
                     Text(store.draft.style.title).font(.system(size: 22, weight: .bold, design: .rounded)).foregroundStyle(PetverseTheme.ink)
@@ -228,7 +228,7 @@ struct CustomizeView: View {
                 VStack(alignment: .leading, spacing: 22) {
                     StepHeader(step: "03", title: "Give them a point of view", subtitle: "Small choices make the character feel personal.")
                     HStack {
-                        PetWorldView(scene: store.draft.scene, style: store.draft.style, appearance: store.draft.appearance, allowsCameraControl: false)
+                        VoxelWorldView(scene: store.draft.scene, traits: store.draft.resolvedTraits, accessory: PetAccessory(appearance: store.draft.appearance), isInteractive: false)
                             .frame(width: 140, height: 140)
                             .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                         VStack(alignment: .leading, spacing: 6) {
@@ -320,7 +320,7 @@ struct HomeView: View {
     var body: some View {
         ZStack {
             if let profile {
-                PetWorldView(scene: profile.scene, style: profile.style, appearance: profile.appearance, isPlaying: store.isPlaying)
+                VoxelWorldView(scene: profile.scene, traits: profile.resolvedTraits, accessory: PetAccessory(appearance: profile.appearance), isPlaying: store.isPlaying)
                     .ignoresSafeArea()
                 LinearGradient(
                     colors: [.black.opacity(0.32), .clear, .black.opacity(0.7)],

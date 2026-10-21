@@ -7,7 +7,7 @@ This page records the repository operating rules so they do not need to be recon
 - Repository: `Tooonnnnyyy/ai-petverse`
 - Default branch: `main`
 - Product: local-first iOS pet companion prototype
-- Public-facing stack labels: Swift 6, SwiftUI, SceneKit, PhotosUI, UIKit, XCTest
+- Public-facing stack labels: Swift 6, SwiftUI, RealityKit, PhotosUI, UIKit, XCTest
 - No backend, provider credential, webhook, or `.env` value belongs in the repository.
 
 ## Branch and rollback policy

@@ -1,9 +1,9 @@
 # AI Petverse
 
-[![Platform](https://img.shields.io/badge/platform-iOS%2017%2B-0A84FF?logo=apple&logoColor=white)](https://developer.apple.com/ios/)
+[![Platform](https://img.shields.io/badge/platform-iOS%2018%2B-0A84FF?logo=apple&logoColor=white)](https://developer.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-6.0%2B-F05138?logo=swift&logoColor=white)](https://www.swift.org/)
 [![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-007AFF)](https://developer.apple.com/xcode/swiftui/)
-[![3D](https://img.shields.io/badge/3D-SceneKit-8E8E93)](https://developer.apple.com/scenekit/)
+[![3D](https://img.shields.io/badge/3D-RealityKit-8E8E93)](https://developer.apple.com/realitykit/)
 [![Tests](https://img.shields.io/badge/tests-11%20passing-34A853)](AI%20PetverseTests/AI_PetverseTests.swift)
 [![License](https://img.shields.io/badge/license-MIT-6366F1)](LICENSE)
 
@@ -15,7 +15,7 @@ AI Petverse is an iOS-first prototype for turning a pet photo into a playful dig
 
 - Camera or photo-library input, plus a preset path for fast review.
 - A local, deterministic avatar preview that keeps the source photo on-device.
-- A procedural SceneKit pet rendered directly inside an immersive 3D world.
+- A voxel pet built from a list of traits (species, size, ears, snout, tail, coat pattern, colours) and rendered with RealityKit. It roams the island on its own and turns with a drag.
 - Two selectable starter scenes: **Pixel Grove** (voxel farm) and **Neon Arcade** (Y2K night glow).
 - `Play together` animates the 3D pet and updates Mood, Energy, and Bond.
 - Local persistence, deletion, share-sheet handoff, cancellation, retry, and cooldown handling.
@@ -26,9 +26,9 @@ The current P0 does **not** claim photo-to-3D reconstruction or a hosted AI gene
 
 | Layer | Choice |
 | --- | --- |
-| App | Swift 6, Xcode project, iOS 17+ |
+| App | Swift 6, Xcode project, iOS 18+ |
 | UI | SwiftUI |
-| 3D world | SceneKit, procedural low-poly geometry, orthographic camera |
+| 3D world | RealityKit, trait-driven voxel meshes, unlit flat shading, orthographic camera |
 | Input | PhotosUI and UIKit camera bridge |
 | Local state | Codable models and UserDefaults-backed persistence |
 | Export | UIKit `UIActivityViewController` share-sheet bridge |
@@ -40,7 +40,7 @@ The current P0 does **not** claim photo-to-3D reconstruction or a hosted AI gene
 ### Requirements
 
 - macOS with Xcode 27 recommended for the current project settings.
-- An iOS 17 or newer Simulator. A physical device requires the developer's own signing team and provisioning setup.
+- An iOS 18 or newer Simulator. A physical device requires the developer's own signing team and provisioning setup.
 - No backend, account, API key, paid service, or `.env` file is required for this P0. `.env` files are ignored so future provider credentials do not enter Git.
 
 ### Open and run
@@ -49,7 +49,7 @@ The current P0 does **not** claim photo-to-3D reconstruction or a hosted AI gene
 open "AI Petverse.xcodeproj"
 ```
 
-In Xcode, select the `AI Petverse` scheme and an iOS 17+ Simulator, then press Run. The camera and photo-library permission strings are already configured in `AI Petverse/Info.plist`.
+In Xcode, select the `AI Petverse` scheme and an iOS 18+ Simulator, then press Run. The camera and photo-library permission strings are already configured in `AI Petverse/Info.plist`.
 
 ### Command-line verification
 
@@ -65,7 +65,7 @@ The current verified result is **11 tests passed, 0 failed**. For a compile-only
 
 ## Repository map
 
-- [`AI Petverse/`](AI%20Petverse) — SwiftUI screens, local store, SceneKit world builder, and avatar preview seam.
+- [`AI Petverse/`](AI%20Petverse) — SwiftUI screens, local store, voxel pet builder, RealityKit world, and avatar preview seam.
 - [`AI PetverseTests/`](AI%20PetverseTests) — deterministic model, persistence, generation, interaction, and scene-selection tests.
 - [`docs/README.zh-CN.md`](docs/README.zh-CN.md) — Chinese project overview and setup guide.
 - [`docs/PROJECT_SETUP.md`](docs/PROJECT_SETUP.md) — environment, simulator, signing, and troubleshooting notes.

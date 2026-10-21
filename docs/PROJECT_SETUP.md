@@ -6,9 +6,9 @@ This page is the reproducible setup reference for AI Petverse. It describes the 
 
 - macOS and Xcode 27 recommended for the current project settings.
 - Swift 6.0 language mode.
-- iOS 17.0 deployment target.
+- iOS 18.0 deployment target (RealityKit's `RealityView` on iOS requires it).
 - iOS Simulator for build and XCTest verification.
-- Apple frameworks only: SwiftUI, SceneKit, PhotosUI, UIKit, Foundation, XCTest.
+- Apple frameworks only: SwiftUI, RealityKit, PhotosUI, UIKit, Foundation, XCTest.
 
 ## Environment variables
 
@@ -20,7 +20,7 @@ The future provider boundary must remain server-side. API keys, webhook URLs, to
 
 1. Open `AI Petverse.xcodeproj`.
 2. Select the `AI Petverse` scheme.
-3. Select an iOS 17+ Simulator.
+3. Select an iOS 18+ Simulator.
 4. Run the app. The first launch starts at onboarding unless a local profile already exists.
 5. For a clean onboarding review, uninstall the app from the Simulator or delete the local pet from the overflow menu.
 

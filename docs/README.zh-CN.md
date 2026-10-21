@@ -61,6 +61,7 @@ xcodebuild -project "AI Petverse.xcodeproj" \
 - [`AI Petverse/`](../AI%20Petverse) — SwiftUI screens、local store、SceneKit world builder 和 avatar preview seam。
 - [`AI PetverseTests/`](../AI%20PetverseTests) — model、persistence、generation、interaction、scene selection 测试。
 - [`docs/PROJECT_SETUP.md`](PROJECT_SETUP.md) — 环境、Simulator、签名和排错说明。
+- [`docs/RELEASE.md`](RELEASE.md) — TestFlight 和 App Store 发布流程。
 - [`docs/PROJECT_GOVERNANCE.md`](PROJECT_GOVERNANCE.md) — public repo 发布和 branch policy。
 - [`docs/evidence/`](evidence) — 本地 Simulator review 截图。
 

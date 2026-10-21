@@ -1,0 +1,3 @@
+// Copy to Config/Signing.local.xcconfig and replace the placeholder.
+// Find the team ID at developer.apple.com > Account > Membership details.
+DEVELOPMENT_TEAM = YOUR_TEAM_ID

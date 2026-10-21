@@ -7,3 +7,9 @@ xcuserdata/
 .env
 .env.*
 !.env.example
+
+# Local signing identity (team ID)
+Config/Signing.local.xcconfig
+
+# Local archives and exports
+build/

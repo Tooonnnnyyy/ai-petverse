@@ -69,6 +69,7 @@ The current verified result is **11 tests passed, 0 failed**. For a compile-only
 - [`AI PetverseTests/`](AI%20PetverseTests) — deterministic model, persistence, generation, interaction, and scene-selection tests.
 - [`docs/README.zh-CN.md`](docs/README.zh-CN.md) — Chinese project overview and setup guide.
 - [`docs/PROJECT_SETUP.md`](docs/PROJECT_SETUP.md) — environment, simulator, signing, and troubleshooting notes.
+- [`docs/RELEASE.md`](docs/RELEASE.md) — TestFlight and App Store release runbook.
 - [`docs/PROJECT_GOVERNANCE.md`](docs/PROJECT_GOVERNANCE.md) — public-repository release and branch policy.
 - [`docs/evidence/`](docs/evidence) — local Simulator screenshots used for review.
 

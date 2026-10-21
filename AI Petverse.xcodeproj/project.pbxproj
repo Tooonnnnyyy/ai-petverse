@@ -17,6 +17,9 @@
 		A00000000000000000000210 /* AvatarGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000113 /* AvatarGeneration.swift */; };
 		A00000000000000000000208 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000108 /* Assets.xcassets */; };
 		A00000000000000000000211 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000114 /* PrivacyInfo.xcprivacy */; };
+		A00000000000000000000212 /* VoxelPet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000116 /* VoxelPet.swift */; };
+		A00000000000000000000213 /* VoxelWorldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000117 /* VoxelWorldView.swift */; };
+		A00000000000000000000214 /* VoxelPetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000118 /* VoxelPetTests.swift */; };
 		A00000000000000000000209 /* AI_PetverseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000112 /* AI_PetverseTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -54,6 +57,9 @@
 		A00000000000000000000113 /* AvatarGeneration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarGeneration.swift; sourceTree = "<group>"; };
 		A00000000000000000000114 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A00000000000000000000115 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+		A00000000000000000000116 /* VoxelPet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoxelPet.swift; sourceTree = "<group>"; };
+		A00000000000000000000117 /* VoxelWorldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoxelWorldView.swift; sourceTree = "<group>"; };
+		A00000000000000000000118 /* VoxelPetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoxelPetTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +101,8 @@
 				A00000000000000000000106 /* Components.swift */,
 				A00000000000000000000107 /* ShareSheet.swift */,
 				A00000000000000000000113 /* AvatarGeneration.swift */,
+				A00000000000000000000116 /* VoxelPet.swift */,
+				A00000000000000000000117 /* VoxelWorldView.swift */,
 				A00000000000000000000108 /* Assets.xcassets */,
 				A00000000000000000000109 /* Info.plist */,
 				A00000000000000000000114 /* PrivacyInfo.xcprivacy */,
@@ -115,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				A00000000000000000000112 /* AI_PetverseTests.swift */,
+				A00000000000000000000118 /* VoxelPetTests.swift */,
 			);
 			path = "AI PetverseTests";
 			sourceTree = "<group>";
@@ -216,6 +225,8 @@
 				A00000000000000000000206 /* Components.swift in Sources */,
 				A00000000000000000000207 /* ShareSheet.swift in Sources */,
 				A00000000000000000000210 /* AvatarGeneration.swift in Sources */,
+				A00000000000000000000212 /* VoxelPet.swift in Sources */,
+				A00000000000000000000213 /* VoxelWorldView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +235,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A00000000000000000000209 /* AI_PetverseTests.swift in Sources */,
+				A00000000000000000000214 /* VoxelPetTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,7 +258,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ONLY_ACTIVE_ARCH = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -260,7 +272,7 @@
 				ARCHS = arm64;
 				CLANG_ENABLE_MODULES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -278,7 +290,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = "AI Petverse/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tony.aipetverse;
 				PRODUCT_MODULE_NAME = PetverseApp;
@@ -296,7 +308,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = "AI Petverse/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tony.aipetverse;
 				PRODUCT_MODULE_NAME = PetverseApp;
@@ -313,7 +325,7 @@
 				ARCHS = arm64;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tony.aipetverse.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 6.0;
@@ -328,7 +340,7 @@
 				ARCHS = arm64;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tony.aipetverse.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 6.0;

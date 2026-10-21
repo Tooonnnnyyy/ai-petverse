@@ -5,6 +5,26 @@ struct PetAppearance: Codable, Equatable {
     var accessory: String = "none"
 }
 
+extension PetAppearance {
+    var colorHex: String {
+        switch color {
+        case "violet": return "8B5CF6"
+        case "mint": return "49B98C"
+        case "rose": return "FF4FB3"
+        default: return "F59E0B"
+        }
+    }
+
+    var accessorySymbol: String? {
+        switch accessory {
+        case "star collar": return "⭐️"
+        case "party hat": return "🎉"
+        case "flower": return "🌸"
+        default: return nil
+        }
+    }
+}
+
 struct PetPersonality: Codable, Equatable {
     var playfulness: Int = 72
     var curiosity: Int = 64
@@ -43,7 +63,12 @@ struct PetProfile: Codable, Equatable, Identifiable {
     /// The locally rendered pixel avatar. Kept separate from the original so the
     /// product never presents the uploaded photo as a generated result.
     var avatarImageData: Data?
+    /// Filled from a photo once AI generation ships; older pets have none and
+    /// fall back to traits derived from their appearance.
+    var traits: PetTraits?
     var createdAt: Date = Date()
+
+    var resolvedTraits: PetTraits { traits ?? PetTraits(appearance: appearance) }
 
     static var fallback: PetProfile {
         PetProfile(
@@ -59,7 +84,7 @@ struct PetProfile: Codable, Equatable, Identifiable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case id, name, style, scene, appearance, personality, state, sourceImageData, avatarImageData, createdAt
+        case id, name, style, scene, appearance, personality, state, sourceImageData, avatarImageData, traits, createdAt
     }
 
     init(
@@ -72,6 +97,7 @@ struct PetProfile: Codable, Equatable, Identifiable {
         state: PetState,
         sourceImageData: Data?,
         avatarImageData: Data? = nil,
+        traits: PetTraits? = nil,
         createdAt: Date = Date()
     ) {
         self.id = id
@@ -83,6 +109,7 @@ struct PetProfile: Codable, Equatable, Identifiable {
         self.state = state
         self.sourceImageData = sourceImageData
         self.avatarImageData = avatarImageData
+        self.traits = traits
         self.createdAt = createdAt
     }
 
@@ -97,6 +124,7 @@ struct PetProfile: Codable, Equatable, Identifiable {
         state = try container.decode(PetState.self, forKey: .state)
         sourceImageData = try container.decodeIfPresent(Data.self, forKey: .sourceImageData)
         avatarImageData = try container.decodeIfPresent(Data.self, forKey: .avatarImageData)
+        traits = try container.decodeIfPresent(PetTraits.self, forKey: .traits)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
     }
 }
@@ -191,6 +219,9 @@ struct PetDraft: Equatable {
     var personality = PetPersonality()
     var sourceImageData: Data?
     var avatarImageData: Data?
+    var traits: PetTraits?
+
+    var resolvedTraits: PetTraits { traits ?? PetTraits(appearance: appearance) }
 
     init(profile: PetProfile? = nil) {
         guard let profile else { return }
@@ -201,6 +232,7 @@ struct PetDraft: Equatable {
         personality = profile.personality
         sourceImageData = profile.sourceImageData
         avatarImageData = profile.avatarImageData
+        traits = profile.traits
     }
 
     func makeProfile() -> PetProfile {
@@ -212,7 +244,8 @@ struct PetDraft: Equatable {
             personality: personality,
             state: PetState(),
             sourceImageData: sourceImageData,
-            avatarImageData: avatarImageData
+            avatarImageData: avatarImageData,
+            traits: traits
         )
     }
 }

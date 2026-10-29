@@ -13,3 +13,9 @@ Config/Signing.local.xcconfig
 
 # Local archives and exports
 build/
+
+# Web MVP
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo

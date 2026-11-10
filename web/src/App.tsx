@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { interpretIntent, petModeForIntent, responseForIntent } from "./policy";
 import type {
@@ -54,6 +54,24 @@ function logEvent(
   return [...events, { name, timestamp: new Date().toISOString(), properties }];
 }
 
+function sanitizeProfile(value: unknown): PetProfile {
+  if (!value || typeof value !== "object") return defaultProfile;
+  const saved = value as Partial<Record<keyof PetProfile, unknown>>;
+  const pick = <T extends string>(candidate: unknown, allowed: readonly T[], fallback: T): T =>
+    typeof candidate === "string" && (allowed as readonly string[]).includes(candidate) ? (candidate as T) : fallback;
+  const text = (candidate: unknown, fallback: string) => (typeof candidate === "string" ? candidate.slice(0, 200) : fallback);
+  return {
+    name: text(saved.name, defaultProfile.name),
+    species: pick(saved.species, ["cat", "dog"] as const, defaultProfile.species),
+    energy: pick(saved.energy, ["low", "steady", "high"] as const, defaultProfile.energy),
+    comfortStyle: pick(saved.comfortStyle, ["close", "nearby", "space"] as const, defaultProfile.comfortStyle),
+    trigger: text(saved.trigger, defaultProfile.trigger),
+    favouriteActivity: text(saved.favouriteActivity, defaultProfile.favouriteActivity),
+    correction: text(saved.correction, defaultProfile.correction),
+    published: saved.published === true,
+  };
+}
+
 export default function App() {
   const [screen, setScreen] = useState<Screen>("signin");
   const [view, setView] = useState<View>("companion");
@@ -61,7 +79,7 @@ export default function App() {
   const [profile, setProfile] = useState<PetProfile>(() => {
     try {
       const saved = window.localStorage.getItem(profileStorageKey);
-      return saved ? { ...defaultProfile, ...JSON.parse(saved) } : defaultProfile;
+      return saved ? sanitizeProfile(JSON.parse(saved)) : defaultProfile;
     } catch {
       return defaultProfile;
     }
@@ -77,15 +95,20 @@ export default function App() {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [events, setEvents] = useState<PetEvent[]>([]);
   const [notice, setNotice] = useState("");
+  const [actionCount, setActionCount] = useState(0);
 
   useEffect(() => {
     if (screen !== "studio" || mode === "idle" || mode === "watching") return;
     const timer = window.setTimeout(() => setMode("idle"), 5200);
     return () => window.clearTimeout(timer);
-  }, [mode, screen]);
+  }, [mode, screen, actionCount]);
 
   useEffect(() => {
-    window.localStorage.setItem(profileStorageKey, JSON.stringify(profile));
+    try {
+      window.localStorage.setItem(profileStorageKey, JSON.stringify(profile));
+    } catch {
+      // Storage can be blocked or full; the profile still works for this session.
+    }
   }, [profile]);
 
   const profileCompletion = useMemo(() => {
@@ -127,6 +150,7 @@ export default function App() {
     const result = text ? interpretIntent(text) : { intent, confidence: 1, source: "rule-preview" as const, evidence: ["User chose a bounded action."] };
     const chosenMode = petModeForIntent(result.intent, profile);
     setMode(chosenMode);
+    setActionCount((count) => count + 1);
     setLastIntent(result.intent);
     setLastConfidence(result.confidence);
     setResponse(responseForIntent(result.intent, profile));
@@ -157,6 +181,28 @@ export default function App() {
         correction_added: correction.trim().length > 0,
       }),
     );
+  }
+
+  function resetAll() {
+    try {
+      window.localStorage.removeItem(profileStorageKey);
+    } catch {
+      // Nothing stored or storage unavailable.
+    }
+    setProfile(defaultProfile);
+    setStep(0);
+    setMode("idle");
+    setResponse("Your pet is ready when you are.");
+    setLastIntent(null);
+    setLastConfidence(null);
+    setFeedback(null);
+    setCorrection("");
+    setFeedbackOpen(false);
+    setEvents([]);
+    setNotice("");
+    setEmail("");
+    setScreen("signin");
+    setView("companion");
   }
 
   function togglePublish() {
@@ -281,7 +327,7 @@ export default function App() {
                 <ActionButton label="Let's play" detail="change the rhythm" onClick={() => runAction("play")} icon="✳" />
               </div>
               <form className="intent-form" onSubmit={handleIntentSubmit}>
-                <input value={intentText} onChange={(event) => setIntentText(event.target.value)} placeholder="Or tell {profile.name} in your own words..." aria-label="Tell your pet what you need" />
+                <input value={intentText} onChange={(event) => setIntentText(event.target.value)} placeholder={`Or tell ${profile.name} in your own words...`} aria-label="Tell your pet what you need" />
                 <button type="submit" aria-label="Send message">Send <span>↗</span></button>
               </form>
             </div>
@@ -303,7 +349,7 @@ export default function App() {
       ) : (
         <CommunityView profile={profile} onPublish={togglePublish} />
       )}
-      <footer className="app-footer"><span>AI Petverse / browser MVP</span><span>Local preview · {events.length} events in this session · <button type="button" onClick={() => { setScreen("signin"); setView("companion"); }}>Reset demo</button></span></footer>
+      <footer className="app-footer"><span>AI Petverse / browser MVP</span><span>Local preview · {events.length} events in this session · <button type="button" onClick={resetAll}>Reset demo</button></span></footer>
     </main>
   );
 }
@@ -323,7 +369,7 @@ function Onboarding({
 }) {
   const steps = ["species", "name", "energy", "comfort", "trigger", "ritual"] as const;
   const current = steps[step];
-  const canContinue = current === "name" ? profile.name.trim().length > 1 : true;
+  const canContinue = current === "name" ? profile.name.trim().length > 0 : true;
 
   function next() {
     if (step === steps.length - 1) return;
@@ -334,7 +380,7 @@ function Onboarding({
     <main className="onboarding-screen">
       <header className="onboarding-topbar"><div className="brand-mark compact"><span>AP</span><strong>AI Petverse</strong></div><span className="save-label">Profile saves as you go <span className="signal-dot" /></span></header>
       <div className="onboarding-layout">
-        <aside className="onboarding-sidebar"><div className="onboarding-count"><span>PROFILE BUILD</span><strong>0{step + 1}<i>/</i>06</strong></div><div className="onboarding-progress"><i style={{ height: `${((step + 1) / 6) * 100}%` }} /></div><div className="onboarding-sidebar-copy"><h1>Tell us the<br /><em>small things.</em></h1><p>The details you notice every day are what make a digital pet feel like yours.</p></div><div className="onboarding-sidebar-foot"><span className="note-mark">✦</span><p>Facts first.<br />AI guesses later.</p></div></aside>
+        <aside className="onboarding-sidebar"><div className="onboarding-count"><span>PROFILE BUILD</span><strong>0{step + 1}<i>/</i>06</strong></div><div className="onboarding-progress"><i style={{ "--progress": `${((step + 1) / 6) * 100}%` } as CSSProperties} /></div><div className="onboarding-sidebar-copy"><h1>Tell us the<br /><em>small things.</em></h1><p>The details you notice every day are what make a digital pet feel like yours.</p></div><div className="onboarding-sidebar-foot"><span className="note-mark">✦</span><p>Facts first.<br />AI guesses later.</p></div></aside>
         <form className="question-panel" onSubmit={step === steps.length - 1 ? onComplete : (event) => { event.preventDefault(); next(); }}>
           <div className="question-header"><span className="overline">{step < 2 ? "Start with the basics" : "Build the relationship"}</span><span className="question-step">{String(step + 1).padStart(2, "0")} / 06</span></div>
           {current === "species" && <QuestionBlock title="Who are we getting to know?" detail="Start with the animal you know best." ><div className="species-options"><ChoiceCard selected={profile.species === "cat"} onClick={() => updateProfile({ species: "cat" })} icon="cat" label="Cat" detail="quiet signals, sharp rituals" /><ChoiceCard selected={profile.species === "dog"} onClick={() => updateProfile({ species: "dog" })} icon="dog" label="Dog" detail="open signals, moving energy" /></div></QuestionBlock>}

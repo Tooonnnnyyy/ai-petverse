@@ -359,7 +359,7 @@ h1 em, h2 em { color: var(--cobalt); font-style: italic; font-weight: 400; }
 .onboarding-count strong { font-family: var(--serif); font-size: 2.4rem; font-weight: 400; letter-spacing: -0.08em; }
 .onboarding-count i { padding: 0 0.3rem; color: var(--coral); font-size: 1.2rem; font-style: normal; }
 .onboarding-progress { position: relative; width: 3px; height: 10rem; margin: 1.5rem 0 0.8rem; overflow: hidden; background: var(--paper-deep); }
-.onboarding-progress i { display: block; width: 100%; background: var(--coral); transition: height 300ms ease; }
+.onboarding-progress i { display: block; width: 100%; height: var(--progress, 0%); background: var(--coral); transition: height 300ms ease, width 300ms ease; }
 .onboarding-sidebar-copy { margin-top: auto; }
 .onboarding-sidebar-copy h1 { margin: 0; font-family: var(--serif); font-size: clamp(3.2rem, 5.4vw, 5.4rem); font-weight: 400; letter-spacing: -0.09em; line-height: 0.84; }
 .onboarding-sidebar-copy p { max-width: 17rem; margin: 1.4rem 0 0; color: var(--ink-soft); font-size: 0.8rem; line-height: 1.55; }
@@ -461,7 +461,7 @@ h1 em, h2 em { color: var(--cobalt); font-style: italic; font-weight: 400; }
   .onboarding-layout { display: block; margin-top: 3.3rem; }
   .onboarding-sidebar { min-height: 0; }
   .onboarding-progress { width: 100%; height: 3px; margin: 1rem 0 2.4rem; }
-  .onboarding-progress i { width: 100%; height: 100% !important; }
+  .onboarding-progress i { width: var(--progress, 0%); height: 100%; }
   .onboarding-sidebar-copy h1 { font-size: clamp(3.6rem, 15vw, 5rem); }
   .onboarding-sidebar-copy p { margin-top: 1rem; }
   .onboarding-sidebar-foot { display: none; }

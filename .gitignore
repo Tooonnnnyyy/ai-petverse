@@ -19,3 +19,8 @@ node_modules/
 dist/
 coverage/
 *.tsbuildinfo
+web/vite.config.js
+web/vite.config.d.ts
+web/*.tsbuildinfo
+.omc/
+web/.omc/

@@ -3,8 +3,10 @@ name: iOS verification
 on:
   push:
     branches: [main]
+    paths-ignore: ["web/**", "docs/**", ".github/workflows/web-pages.yml"]
   pull_request:
     branches: [main]
+    paths-ignore: ["web/**", "docs/**", ".github/workflows/web-pages.yml"]
 
 permissions:
   contents: read

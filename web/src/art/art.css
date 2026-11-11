@@ -1,0 +1,84 @@
+/* Placeholder art: fills, outlines and idle motion (spec §8.1). */
+.pet, .prop { --pet-ink: rgba(29, 38, 49, 0.85); display: block; overflow: visible; }
+
+/* coat fills */
+.pet .c { fill: var(--coat); }
+.pet .s { fill: var(--coat-shade); }
+.pet .b { fill: var(--belly); }
+.pet .ei { fill: var(--ear-inner); }
+.pet .ey { fill: var(--eye); }
+.pet .n { fill: var(--nose); }
+.pet .k { fill: var(--pet-ink); }
+.pet .w, .prop .pw { fill: #fffdf8; }
+.pet .mo { fill: #6e2f38; }
+.pet .tg { fill: #f2909a; }
+.pet .bl { fill: #ef8a78; opacity: 0.35; }
+.pet .hrt { fill: var(--coral, #de735a); }
+
+/* prop fills (paper palette) */
+.prop .pc { fill: var(--coral, #de735a); }
+.prop .pcd { fill: #c25e47; }
+.prop .po { fill: var(--ochre, #d29a49); }
+.prop .ps { fill: var(--sage, #98a98e); }
+.prop .psd { fill: #7d8f74; }
+.prop .pd { fill: var(--paper-deep, #e9dfcf); }
+.prop .pdd { fill: #ddd0bb; }
+.prop .pk { fill: #b97a3a; }
+.prop .pkl { fill: #d9a066; }
+.prop .sky { fill: #cfe2ee; }
+
+/* outlines and tubes */
+:is(.pet, .prop) .nf { fill: none; }
+:is(.pet, .prop) :is(.o6, .o4, .o3, .tk) { stroke: var(--pet-ink); stroke-linecap: round; stroke-linejoin: round; }
+:is(.pet, .prop) .o6 { stroke-width: 6; }
+:is(.pet, .prop) .o4 { stroke-width: 4; }
+:is(.pet, .prop) .o3 { stroke-width: 3; opacity: 0.7; }
+:is(.pet, .prop) :is(.tk, .tc, .ts, .tpo, .tpw, .tpc) { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.pet .tc { stroke: var(--coat); }
+.pet .ts { stroke: var(--coat-shade); }
+.prop .tpo { stroke: var(--ochre, #d29a49); }
+.prop .tpw { stroke: #fffdf8; }
+.prop .tpc { stroke: var(--coral, #de735a); stroke-linecap: butt; }
+.prop .soft { opacity: 0.35; }
+.prop .dash { stroke: #fffdf8; stroke-width: 3; stroke-dasharray: 8 10; opacity: 0.8; }
+
+/* idle motion: named groups only */
+.pet [data-part] { transform-box: view-box; }
+.pet [data-part="eyes"][data-state="open"] {
+  transform-box: fill-box; transform-origin: center; animation: pet-blink 15s infinite;
+}
+.pet [data-part="tail"] { animation: pet-sway 3.2s ease-in-out infinite alternate; }
+.pet[data-species="dog"][data-mood="happy"] [data-part="tail"] { animation: pet-wag 0.36s ease-in-out infinite alternate; }
+.pet[data-idle] [data-part="body"] { transform-origin: 256px 450px; animation: pet-breathe 3.5s ease-in-out infinite alternate; }
+.pet[data-idle] [data-part="head"] { animation: pet-bob 3.5s ease-in-out infinite alternate; }
+.pet .pet-z { transform-box: fill-box; transform-origin: center; animation: pet-z 2.4s ease-in-out infinite; }
+
+/* blinks ~120 ms at 3–6 s intervals (6 s, 3.75 s, 5.25 s) */
+@keyframes pet-blink {
+  0%, 20%, 20.8%, 60%, 60.8%, 85%, 85.8%, 100% { transform: scaleY(1); }
+  20.4%, 60.4%, 85.4% { transform: scaleY(0.1); }
+}
+@keyframes pet-sway { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } }
+@keyframes pet-wag { from { transform: rotate(-15deg); } to { transform: rotate(15deg); } }
+@keyframes pet-breathe { from { transform: scaleY(1); } to { transform: scaleY(1.015); } }
+@keyframes pet-bob { from { transform: translateY(0); } to { transform: translateY(-3px); } }
+@keyframes pet-z { 0%, 100% { opacity: 0.35; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-6px); } }
+
+/* calm motion: OS preference (unless a .motion-ok ancestor opts back in) or a .calm ancestor */
+@media (prefers-reduced-motion: reduce) {
+  .pet:not(.motion-ok .pet) * { animation: none !important; }
+}
+.calm .pet *, .pet.calm * { animation: none !important; }
+
+/* contact sheet (dev only) */
+.artsheet { padding: 24px 16px; color: var(--ink, #1d2631); background: var(--paper, #f3eee3); font-family: var(--sans, sans-serif); }
+.artsheet h1 { font-family: var(--serif, serif); font-weight: 500; margin: 0 0 4px; }
+.artsheet h2 { font-size: 15px; margin: 28px 0 10px; }
+.artsheet p { margin: 0; color: var(--ink-soft, #56606a); font-size: 14px; }
+.artsheet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.artsheet-cell { margin: 0; background: var(--white, #fffdf8); border: 1px solid var(--line, rgba(29, 38, 49, 0.16)); border-radius: 12px; padding: 8px; }
+.artsheet-box { position: relative; aspect-ratio: 1; display: grid; place-items: end center; }
+.artsheet-box > svg { width: 100%; height: 100%; }
+.artsheet-box > .prop { height: auto; max-height: 100%; }
+.artsheet-floor { position: absolute; left: 0; right: 0; top: 87.9%; border-top: 1px dashed var(--line-strong, rgba(29, 38, 49, 0.3)); }
+.artsheet-cell figcaption { font: 12px/1.3 var(--mono, monospace); text-align: center; margin-top: 4px; }

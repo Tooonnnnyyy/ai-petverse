@@ -223,6 +223,7 @@ export type PetState = {
   lastBubbleAt: number;
   lastLineIds: LineId[];
   rngState: number;
+  plan?: PetCommand[]; // queued follow-up commands (e.g. the long state after a transition); pet/machine.ts only
 };
 
 export type PetInput =

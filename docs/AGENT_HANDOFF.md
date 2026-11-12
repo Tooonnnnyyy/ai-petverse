@@ -44,6 +44,7 @@ The Web MVP has onboarding, drawn cat/dog pets, autonomous idle states, pet/drag
 ## Active work
 
 - Codex is performing a small browser QA pass and will only make changes that improve the live feedback loop without changing the native iOS line.
+- **2026-11-11 — Codex:** identified three low-risk fixes for the live feedback loop: remove the `kms` distance false positive from urgent-help matching, keep level-up cards usable on short mobile stages, and avoid rendering the decorative bowl while the pet is eating.
 - Next agent should read this file, inspect `git status`, run the relevant Web checks, and append a dated entry before handing work off.
 
 ## Update log

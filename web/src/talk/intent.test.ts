@@ -84,6 +84,7 @@ describe("detectUrgent", () => {
     ["dead tired", false],
     ["this bug is killing me", false],
     ["I'm dying to play", false],
+    ["I walked 5 kms today", false],
     ["hello there", false],
     ["我想玩", false],
   ] as const)("%s -> %s", (t, expected) => expect(detectUrgent(t)).toBe(expected));

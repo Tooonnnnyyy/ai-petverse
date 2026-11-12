@@ -351,7 +351,12 @@ p { margin: 0 0 8px; }
   .topbar-name strong { font-size: 20px; }
   .topbar-name .small { display: none; }
   .card-slot { position: static; padding: 0; margin: 0; }
-  .stage .card-slot { position: absolute; top: 8px; left: 8px; right: 8px; }
+  .stage .card-slot {
+    position: absolute; top: 8px; right: 8px; bottom: 8px; left: 8px;
+    max-height: calc(100% - 16px); overflow-y: auto; align-items: flex-start;
+    padding-bottom: 2px; -webkit-overflow-scrolling: touch;
+  }
+  .stage .card-slot > .stage-card { flex: 0 0 auto; }
   .stage-card { padding: 10px 12px; }
   .card-title.big { font-size: 21px; }
   .dock-row { gap: 6px; }

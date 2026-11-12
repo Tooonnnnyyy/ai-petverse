@@ -170,6 +170,7 @@ export function Stage(p: StageProps) {
   const zones: DropZone[] = ["bed", "bowl", ...(p.unlocked.has("cushion") ? (["cushion"] as const) : []), ...(p.unlocked.has("windowSeat") ? (["windowSeat"] as const) : [])];
   const eating = s.name === "eat";
   const atBowl = Math.abs(s.x - ZONE_X.bowl) < 0.07;
+  const showRoomBowl = !eating || atBowl;
   const facing = motion.facing;
 
   return (
@@ -197,7 +198,7 @@ export function Stage(p: StageProps) {
         <Prop id="windowSeat" x={ZONE_X.windowSeat * W} size={size} floorY={floorY}><WindowSeat /></Prop>
       )}
       <Prop id="bed" x={ZONE_X.bed * W} size={size} floorY={floorY}><Bed /></Prop>
-      <Prop id="bowl" x={ZONE_X.bowl * W} size={size} floorY={floorY}><Bowl full={eating && atBowl} /></Prop>
+      {showRoomBowl && <Prop id="bowl" x={ZONE_X.bowl * W} size={size} floorY={floorY}><Bowl full={eating && atBowl} /></Prop>}
       {p.unlocked.has("cushion") && (
         <Prop id="cushion" x={ZONE_X.cushion * W} size={size} floorY={floorY} className="pop-in"><Cushion /></Prop>
       )}

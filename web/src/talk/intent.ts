@@ -120,7 +120,7 @@ export const URGENT_EN: readonly string[] = [
   "want to be dead", "don't want to be alive", "dont want to be alive", "do not want to be alive",
   "don't want to live", "dont want to live", "do not want to live", "no reason to live", "better off dead",
   "take my own life", "hurt myself", "hurting myself", "harm myself", "cut myself", "self harm", "selfharm",
-  "suicide", "suicidal", "unalive myself", "kms",
+  "suicide", "suicidal", "unalive myself",
 ];
 
 export const URGENT_ZH: readonly string[] = [

@@ -39,6 +39,7 @@ export type GameApi = {
   startDemo: () => void;
   exitDemo: () => void;
   saveProfile: (p: PetProfile) => void;
+  savePhotoMeta: (count: number) => void;
   deleteAll: () => Promise<void>;
 };
 
@@ -188,6 +189,7 @@ export function useGame(savingOffMsg: string): GameApi {
         }
         update((s) => ({ ...s, profile: p }), true);
       },
+      savePhotoMeta: (count) => update((s) => ({ ...s, photo: count > 0 ? { consent: true, count, updatedAt: new Date().toISOString(), avatarVersion: (s.photo?.avatarVersion ?? 0) + 1 } : null }), true),
       deleteAll: async () => {
         if (timer.current !== null) window.clearTimeout(timer.current);
         timer.current = null;

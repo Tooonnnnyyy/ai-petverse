@@ -1,12 +1,16 @@
 // Onboarding (spec §9.1, trimmed to 3 quick steps for iteration 1): nothing pre-filled, "Not sure yet"
 // on every choice, progress from steps.length, saves only on "Meet {name}".
 import { useState } from "react";
-import type { CoatId, ComfortStyle, Energy, PetProfile, Species } from "../shared/types";
+import type { BreedId, CoatId, ComfortStyle, Energy, PetProfile, Species } from "../shared/types";
 import PlaceholderPet from "../art/PlaceholderPet";
 import { fill, ui } from "../copy/en/ui";
 
 const COATS: Record<Species, CoatId[]> = { cat: ["ginger", "grey"], dog: ["tan", "blackTan"] };
-const STEPS = ["species", "name", "company"] as const;
+const STEPS = ["species", "name", "photos", "company"] as const;
+const BREEDS: Record<Species, { value: BreedId; label: string }[]> = {
+  cat: [{ value: "orangeCat", label: "Orange cat" }, { value: "tabbyCat", label: "Tabby cat" }],
+  dog: [{ value: "goldenRetriever", label: "Golden retriever" }, { value: "blackLab", label: "Black lab" }],
+};
 const MAX_NAME = 24;
 
 function Options<T extends string>(p: { label: string; value: T | null; options: { value: T | null; label: string; detail?: string }[]; onPick: (v: T | null) => void }) {
@@ -29,19 +33,22 @@ function Options<T extends string>(p: { label: string; value: T | null; options:
   );
 }
 
-export function Onboarding({ onDone, onCancel }: { onDone: (p: PetProfile) => void; onCancel: () => void }) {
+export function Onboarding({ onDone, onCancel }: { onDone: (p: PetProfile, photos: File[]) => void; onCancel: () => void }) {
   const [step, setStep] = useState(0);
   const [species, setSpecies] = useState<Species | null>(null);
   const [coat, setCoat] = useState<CoatId | null>(null);
+  const [breed, setBreed] = useState<BreedId | null>(null);
   const [name, setName] = useState("");
   const [comfort, setComfort] = useState<ComfortStyle | null>(null);
   const [energy, setEnergy] = useState<Energy | null>(null);
   const [comfortTouched, setComfortTouched] = useState(false);
   const [energyTouched, setEnergyTouched] = useState(false);
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [photoConsent, setPhotoConsent] = useState(false);
 
   const trimmed = name.trim();
   const id = STEPS[step];
-  const canNext = id === "species" ? species !== null : id === "name" ? trimmed.length >= 1 && trimmed.length <= MAX_NAME : comfortTouched && energyTouched;
+  const canNext = id === "species" ? species !== null : id === "name" ? trimmed.length >= 1 && trimmed.length <= MAX_NAME : id === "photos" ? photos.length === 0 || photoConsent : comfortTouched && energyTouched;
   const finish = () =>
     onDone({
       name: trimmed,
@@ -51,7 +58,8 @@ export function Onboarding({ onDone, onCancel }: { onDone: (p: PetProfile) => vo
       trigger: null,
       favouriteActivity: "",
       coat,
-    });
+      breed,
+    }, photos);
 
   return (
     <main className="onboarding">
@@ -83,6 +91,7 @@ export function Onboarding({ onDone, onCancel }: { onDone: (p: PetProfile) => vo
                   className={`species-card${species === sp ? " selected" : ""}`}
                   onClick={() => {
                     setSpecies(sp);
+                    setBreed(null);
                     if (coat && !COATS[sp].includes(coat)) setCoat(null);
                   }}
                 >
@@ -105,8 +114,24 @@ export function Onboarding({ onDone, onCancel }: { onDone: (p: PetProfile) => vo
                     <span>{ui.onboarding.notSure}</span>
                   </button>
                 </div>
+                <h2 className="h3">Type (optional)</h2>
+                <div className="chip-row" role="radiogroup" aria-label="Type">
+                  {BREEDS[species].map((b) => <button key={b.value} type="button" role="radio" aria-checked={breed === b.value} className={`chip${breed === b.value ? " selected" : ""}`} onClick={() => setBreed(b.value)}>{b.label}</button>)}
+                  <button type="button" role="radio" aria-checked={breed === null} className={`chip${breed === null ? " selected" : ""}`} onClick={() => setBreed(null)}>Not sure yet</button>
+                </div>
               </>
             )}
+          </>
+        )}
+
+        {id === "photos" && (
+          <>
+            <h1>Bring your pet in</h1>
+            <p className="muted">Add up to 3 clear photos so the room can use your pet as a visual reference. Photos stay in this browser for this MVP.</p>
+            <label className="photo-picker"><span className="btn primary">Choose cat or dog photos</span><input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={(e) => setPhotos(Array.from(e.target.files ?? []).filter((f) => f.size <= 8 * 1024 * 1024).slice(0, 3))} /></label>
+            {photos.length > 0 && <p className="small">{photos.length} photo{photos.length === 1 ? "" : "s"} selected · local only</p>}
+            <label className="consent-row"><input type="checkbox" checked={photoConsent} onChange={(e) => setPhotoConsent(e.target.checked)} /><span>I agree to keep these photos locally for my pet profile.</span></label>
+            <p className="note">This creates a photo-grounded approximation with gentle motion. It is not a medical, identity or perfect 3D reconstruction.</p>
           </>
         )}
 

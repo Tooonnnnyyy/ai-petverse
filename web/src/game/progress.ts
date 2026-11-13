@@ -4,6 +4,7 @@ import { awardBond, levelFor } from "./bond";
 import { ECONOMY } from "./config";
 import { localDayKey } from "./time";
 import { pendingUnlocks } from "./unlocks";
+import { addLifeSignal } from "./life";
 
 export const GIFT_CARD_ID = "gift";
 export const WELCOME_CARD_ID = "welcome";
@@ -23,7 +24,8 @@ export function awardTo(
   now: number,
 ): { save: SaveV2; granted: number; levelUp: number | null } {
   const { ledger, granted, levelUp } = awardBond(s.bond, source, amount ?? ECONOMY[source].bp, localDayKey(now));
-  return { save: granted > 0 || ledger !== s.bond ? { ...s, bond: ledger } : s, granted, levelUp };
+  const life = granted > 0 && (source === "pet" || source === "feed" || source === "play" || source === "talk") ? addLifeSignal(s.life, "interaction", now) : s.life;
+  return { save: granted > 0 || ledger !== s.bond ? { ...s, bond: ledger, life } : s, granted, levelUp };
 }
 
 /** Unlocks a levelUp card announces: reached, not yet seen, at or below the level. */

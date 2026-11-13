@@ -367,3 +367,27 @@ p { margin: 0 0 8px; }
   .drawer { width: 100%; }
   .footer { padding-bottom: 32px; }
 }
+
+/* Photo-grounded pet preview and life loop */
+.photo-pet { position: relative; display: block; width: 100%; height: 100%; overflow: hidden; border-radius: 48% 48% 42% 42%; background: var(--paper-deep); border: 4px solid rgba(29, 38, 49, 0.75); box-shadow: 0 8px 0 rgba(29, 38, 49, 0.12); animation: photo-breathe 3.2s ease-in-out infinite; }
+.photo-pet img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; user-select: none; }
+.photo-pet-glow { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(140deg, rgba(255,255,255,0.24), transparent 40%, rgba(29,38,49,0.08)); }
+.photo-pet-walk, .photo-pet-play { animation-duration: 1.1s; }
+.photo-pet-sleep { animation-duration: 4.8s; filter: saturate(0.85); }
+@keyframes photo-breathe { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-2px) scale(1.012, 0.994); } }
+.photo-picker { display: inline-flex; margin: 16px 0 8px; cursor: pointer; }
+.photo-picker input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.consent-row { display: flex; gap: 10px; align-items: flex-start; margin: 14px 0; font-size: 14px; }
+.consent-row input { width: 20px; height: 20px; margin: 0; flex: none; }
+.life-panel { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 16px; box-shadow: var(--shadow); }
+.life-head { display: flex; gap: 12px; align-items: flex-start; }
+.life-head > div { flex: 1; }
+.life-head > strong { font-size: 18px; color: var(--coral-deep); }
+.life-stats { display: flex; gap: 14px; flex-wrap: wrap; margin: 8px 0; color: var(--ink-soft); font-size: 13px; }
+.life-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.life-item { width: 100%; border: 1px solid var(--line); border-radius: 12px; background: var(--paper-2); padding: 10px; display: flex; gap: 8px; text-align: left; align-items: center; justify-content: space-between; margin: 6px 0; }
+.life-item span { min-width: 0; display: flex; flex-direction: column; }
+.life-item small { color: var(--ink-soft); font-size: 12px; }
+.life-item em { font-style: normal; font-weight: 700; white-space: nowrap; color: var(--coral-deep); }
+.life-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+@media (max-width: 680px) { .life-grid { grid-template-columns: 1fr; } }

@@ -5,6 +5,8 @@ import { PLACES, storyAt } from "./catalog";
 import { awardBond, outingBond } from "./bond";
 import { nextSouvenir, addReward } from "./album";
 import { localDayKey } from "./time";
+import { deriveSeed, mulberry32 } from "./rng";
+import { rareChance, rememberOuting } from "./life";
 
 const MIN = 60_000;
 
@@ -41,6 +43,20 @@ export function rewardFor(o: Outing, returnedAt: number, album: AlbumState, inst
   const elapsed = elapsedMin(o, returnedAt);
   const storyId = storyAt(o.place, album.storyCursor[o.place]);
   const owned = new Set(album.souvenirs);
+  // Outings created before rule v1 retain their original reward contract.
+  // New outings freeze their discovery inputs at departure; reload/purchases cannot reroll them.
+  if (o.discovery) {
+    const place = PLACES[o.place];
+    const rng = mulberry32(deriveSeed(installSeed, `discovery-v1:${o.id}:${o.startedAt}:${o.place}`));
+    if (o.plannedMin !== 1 && elapsed >= SOUVENIR_MIN_ELAPSED) {
+      if (!owned.has(place.keepsake) && rng.next() < rareChance(o.discovery)) {
+        return { kind: "souvenir", id: place.keepsake, storyId, isNew: true, rarity: "rare" };
+      }
+      const available = place.everyday.filter((id) => !owned.has(id));
+      if (available.length) return { kind: "souvenir", id: rng.pick(available), storyId, isNew: true, rarity: rng.next() < 0.25 ? "uncommon" : "common" };
+    }
+    return { kind: "postcard", place: o.place, storyId, hint: null, rarity: "common" };
+  }
   const id = o.plannedMin === 1 ? null : nextSouvenir(o.place, owned, installSeed, elapsed);
   if (id) return { kind: "souvenir", id, storyId, isNew: true };
   const place = PLACES[o.place];
@@ -71,7 +87,7 @@ export function resolveReturn(
   const { ledger, granted, levelUp } = awardBond(s.bond, "outing", bp, localDayKey(now));
   const recalledAt = o.recalledAt ?? (returnedAt < o.endsAt ? returnedAt : null);
   return {
-    save: { ...s, bond: ledger, album: addReward(s.album, reward), pendingGift: reward, outing: { ...o, recalledAt, creditedAt: now } },
+    save: { ...s, bond: ledger, album: addReward(s.album, reward), life: o.discovery ? rememberOuting(s.life, o, reward, now, elapsedMin(o, returnedAt) >= SOUVENIR_MIN_ELAPSED) : s.life, pendingGift: reward, outing: { ...o, recalledAt, creditedAt: now } },
     reward,
     bondGranted: granted,
     levelUp,

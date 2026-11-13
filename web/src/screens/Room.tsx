@@ -16,6 +16,10 @@ import { clearGift, recallOuting, resolveOnLoad, resolveReturn, startOuting } fr
 import { startOrResumeSession } from "../game/session";
 import { deriveSeed } from "../game/rng";
 import { localDayKey } from "../game/time";
+import { discoverySnapshot } from "../game/life";
+import { useCompanionship } from "../hooks/useCompanionship";
+import { LifePanel } from "../room/LifePanel";
+import { loadPetPhotoUrl } from "../storage/photo";
 import { GIFT_CARD_ID, WELCOME_CARD_ID, levelCardId, levelOfCard, markLevelSeen, startupCards, unlocksForCard } from "../game/progress";
 import { talkNarration, type NarrationId } from "../copy/en/talk";
 import { catalogCopy } from "../copy/en/catalog";
@@ -92,6 +96,8 @@ export function Room({ game, onExit, onDeleted }: { game: GameApi; onExit: () =>
   const [announce, setAnnounce] = useState("");
   const [bump, setBump] = useState(0);
   const [panel, setPanel] = useState<"outing" | "album" | null>(null);
+  const [growthOpen, setGrowthOpen] = useState(false);
+  const [photoSrc, setPhotoSrc] = useState<string | null>(null);
   const [urgent, setUrgent] = useState(false);
   const [choices, setChoices] = useState<Intent[] | null>(null);
   const [offerCallBack, setOfferCallBack] = useState(false);
@@ -100,6 +106,11 @@ export function Room({ game, onExit, onDeleted }: { game: GameApi; onExit: () =>
   const restingShown = useRef(false);
   const playHintShown = useRef(false);
   const talkRef = useRef<HTMLInputElement | null>(null);
+  useEffect(() => {
+    let alive = true;
+    loadPetPhotoUrl().then((url) => { if (alive) setPhotoSrc(url); }).catch(() => undefined);
+    return () => { alive = false; };
+  }, [save.photo?.avatarVersion]);
 
   const say = useCallback((text: string, ms: number, speak = true) => {
     if (!text) return;
@@ -220,6 +231,7 @@ export function Room({ game, onExit, onDeleted }: { game: GameApi; onExit: () =>
   const engineRef = useRef(engine);
   engineRef.current = engine;
   const pet = engine.state;
+  useCompanionship(game, pet.name === "paused" || game.celebrationsPaused);
   const act = useCallback((i: PetInput) => engineRef.current.dispatch(i), []);
 
   // ---- session start: visit day, rebuilt cards, greeting ----
@@ -263,18 +275,20 @@ export function Room({ game, onExit, onDeleted }: { game: GameApi; onExit: () =>
     doReturn();
   }, [game, doReturn, narrate, name]);
 
-  const outingBlocked = pet.name === "held" ? fill(ui.outing.blockedHeld, { name }) : game.celebrationsPaused ? ui.outing.blockedPaused : null;
+  const outingBlocked = save.life.activeCourse ? "Your pet is attending a class. Let them finish before a trip." : pet.name === "held" ? fill(ui.outing.blockedHeld, { name }) : game.celebrationsPaused ? ui.outing.blockedPaused : null;
 
   const goOuting = (place: PlaceId, min: OutingMinutes) => {
     if (outingBlocked || game.get().outing) return;
     interacted();
     const now = Date.now();
-    const o = startOuting(place, min, now, `o-${now.toString(36)}`);
+    const base = startOuting(place, min, now, `o-${now.toString(36)}`);
+    const o = { ...base, discovery: discoverySnapshot(game.get().life) };
     game.update((s) => ({ ...s, outing: o }), true);
     setPanel(null);
     act({ t: "outingStart", outing: o });
     narrate(fill(ui.outing.leaving, { name, place: catalogCopy.places[place].name }));
   };
+
 
   // Reconcile the pet with the saved outing (load, reload mid-outing, another tab).
   const outing = save.outing;
@@ -424,6 +438,7 @@ export function Room({ game, onExit, onDeleted }: { game: GameApi; onExit: () =>
         <BondHud bond={save.bond} name={name} bump={bump} />
         <div className="topbar-actions">
           <button type="button" className="btn ghost small" onClick={() => setPanel(panel === "album" ? null : "album")}>{ui.room.album}</button>
+          <button type="button" className="btn ghost small" aria-expanded={growthOpen} onClick={() => setGrowthOpen((v) => !v)}>Pet life · {save.life.coins} ✦</button>
           {save.flags.isDemo && (
             <button type="button" className="btn ghost small" onClick={() => { game.exitDemo(); onExit(); }}>{ui.app.exitDemo}</button>
           )}
@@ -450,6 +465,7 @@ export function Room({ game, onExit, onDeleted }: { game: GameApi; onExit: () =>
         onDragEnd={onDragEnd}
         onDragCancel={() => act({ t: "dragCancel" })}
         onPounce={() => addFloat({ kind: "ring", n: 1 })}
+        photoSrc={photoSrc}
         overlay={pet.name === "away" && outing ? <AwayCard outing={outing} name={name} onCallBack={callBack} /> : null}
         cards={card}
       />
@@ -473,6 +489,8 @@ export function Room({ game, onExit, onDeleted }: { game: GameApi; onExit: () =>
         )}
         <TalkBox ref={talkRef} name={name} away={away} choices={choices} onSend={onSend} onChip={(i) => talkIntent(i, 1)} />
       </section>
+
+      {growthOpen && <LifePanel game={game} level={level} quick={quick} onClose={() => setGrowthOpen(false)} onFeed={onFeed} onOuting={() => { setGrowthOpen(false); setPanel("outing"); }} />}
 
       <Footer
         name={save.flags.isDemo ? null : name}

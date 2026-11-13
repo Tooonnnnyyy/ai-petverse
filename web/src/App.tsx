@@ -8,6 +8,7 @@ import { Room } from "./screens/Room";
 import { Footer } from "./ui/Footer";
 import { UrgentHelpCard } from "./ui/UrgentHelpCard";
 import { ui } from "./copy/en/ui";
+import { savePetPhotos } from "./storage/photo";
 
 type Screen = "welcome" | "onboarding" | "room";
 
@@ -41,8 +42,12 @@ function Game() {
       ) : current === "onboarding" ? (
         <Onboarding
           onCancel={() => setScreen("welcome")}
-          onDone={(p) => {
+          onDone={async (p, photos) => {
             game.saveProfile(p);
+            if (photos.length) {
+              const stored = await savePetPhotos(photos);
+              game.savePhotoMeta(stored.count);
+            }
             setScreen("room");
           }}
         />

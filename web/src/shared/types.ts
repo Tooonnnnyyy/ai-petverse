@@ -14,6 +14,8 @@ export type Energy = "low" | "steady" | "high";
 export type ComfortStyle = "close" | "nearby" | "space";
 export type Trigger = "sudden_noise" | "strangers" | "too_much_energy" | "none";
 export type CoatId = "ginger" | "grey" | "tan" | "blackTan";
+export type BreedId = "orangeCat" | "tabbyCat" | "goldenRetriever" | "blackLab";
+export type PetPhotoMeta = { consent: boolean; count: number; updatedAt: string; avatarVersion: number };
 
 export type PetProfile = {
   name: string;
@@ -23,6 +25,7 @@ export type PetProfile = {
   trigger: Trigger | null;
   favouriteActivity: string; // <= 40 chars, display and play narration only
   coat: CoatId | null;
+  breed?: BreedId | null;
 };
 
 export type Correction = {
@@ -103,10 +106,28 @@ export type Outing = {
   endsAt: number;
   recalledAt: number | null;
   creditedAt: number | null;
+  discovery?: { score: number; purchaseBoost: number; rareMisses: number };
 };
 export type OutingReward =
-  | { kind: "souvenir"; id: SouvenirId; storyId: StoryId; isNew: true }
-  | { kind: "postcard"; place: PlaceId; storyId: StoryId; hint: "longerTrip" | null };
+  | { kind: "souvenir"; id: SouvenirId; storyId: StoryId; isNew: true; rarity?: RewardRarity }
+  | { kind: "postcard"; place: PlaceId; storyId: StoryId; hint: "longerTrip" | null; rarity?: RewardRarity };
+
+export type RewardRarity = "common" | "uncommon" | "rare";
+export type LifeSignal = "interaction" | "activeMinute" | "outing" | "course";
+export type CourseId = "gardenClub" | "trailSchool" | "manners";
+export type ShopId = "bandana" | "bow" | "picnic" | "feast";
+export type AdventureMemory = { id: string; place: PlaceId; rarity: RewardRarity; at: number; storyId: StoryId; souvenir: string | null };
+export type LifeProgress = {
+  signals: Record<LifeSignal, number>;
+  daily: { day: string; counts: Record<LifeSignal, number> };
+  coins: number;
+  purchases: ShopId[];
+  equipped: "bandana" | "bow" | null;
+  completedCourses: CourseId[];
+  activeCourse: { id: CourseId; startedAt: number; endsAt: number } | null;
+  rareMisses: number;
+  memories: AdventureMemory[];
+};
 export type AlbumState = {
   souvenirs: SouvenirId[];
   postcards: StoryId[];
@@ -139,6 +160,8 @@ export type SaveV2 = {
   v: 2;
   installSeed: number;
   profile: PetProfile | null;
+  photo: PetPhotoMeta | null;
+  life: LifeProgress;
   corrections: Correction[];
   bond: BondLedger;
   album: AlbumState;

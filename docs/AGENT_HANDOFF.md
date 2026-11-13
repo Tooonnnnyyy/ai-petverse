@@ -8,11 +8,12 @@ This file is the shared handoff log for Codex, Claude Code, Muse, DeepSeek harne
 - **Baseline commit:** `28774e5125c57854eb4386e878b0ed7fcc830949` (`docs: remove a local machine path from the spec`).
 - **Rollback refs:** local tag `backup/web-preview-2026-11-11-28774e5` and remote branch `backup/web-preview-2026-11-11` both point to the baseline commit.
 - **Protected checkout:** `/Users/bjt/Projects/ai-petverse` remains on `feat/web-pet-gamification` and is not edited by this iteration.
-- **Active isolated worktree:** `/Users/bjt/.codex/worktrees/web-preview-iteration/ai-petverse`, branch `codex/web-preview-iteration`.
+- **Active isolated worktree:** `/Users/bjt/.codex/worktrees/web-preview-iteration/ai-petverse`, branch `codex/web-life-slice`.
 - **Remote preview branch:** `feat/web-pet-gamification`; it is live at <https://tooonnnnyyy.github.io/ai-petverse/>.
 - **Live commit:** `945fdf9494227edccde6dbf15e697967e9a9b7d2` (PR #14 squash merge).
 - **Live rollback tag:** `backup/live-web-2026-11-12-945fdf9`.
 - **Next-loop rollback tag:** `backup/next-loop-2026-11-12-18a1723` (before local life/photo work).
+- **Current review commit:** `0f0d77c` (PR #16, clean/mergeable against the live preview branch).
 
 ## Verified at baseline
 
@@ -58,6 +59,7 @@ The Web MVP has onboarding, drawn cat/dog pets, autonomous idle states, pet/drag
 - **2026-11-11 — Codex:** opened PR #14 (`fix(web): polish live preview feedback loop`) from `codex/web-preview-iteration` into `feat/web-pet-gamification`. PR state is mergeable and clean; local validation remains 14 files / 121 tests plus production build. Waiting for the owner review gate before the live preview branch changes.
 - **2026-11-12 — Codex:** owner asked to accelerate delivery. PR #14 was squash-merged as `945fdf9`; Actions `43329619789` passed Test and build + Deploy; live Pages now returns HTTP 200 with the new assets `index-D8jF6cSe.js` and `index-CvQ9mM1M.css`. Added rollback tag `backup/live-web-2026-11-12-945fdf9`.
 - **2026-11-12 — Codex:** added research notes for FureverDock, GitHub/open-source references, pet-industry services, and visual-realism experiments. Added the local life loop: versioned signal caps, active foreground minutes, deterministic outing discovery/rarity/pity, coins, courses and shop inventory. Added onboarding breed choices (orange cat, tabby cat, golden retriever, black lab), optional consented local photo import (up to 3 images in IndexedDB), photo-grounded gentle motion fallback, and a Pet life panel. Local proof: 15 test files / 124 tests passed, typecheck and Vite production build passed. No photos or credentials entered the repository.
+- **2026-11-12 — Codex:** original PR #15 conflicted because its branch retained the pre-squash history; it was closed without merge. Rebased the same product commit onto live preview SHA `945fdf9` as branch `codex/web-life-slice`, opened PR #16, and verified GitHub reports `MERGEABLE` / `CLEAN`. Live Pages remains unchanged pending review.
 
 ## Next priorities for allocation
 

@@ -8,12 +8,14 @@ This file is the shared handoff log for Codex, Claude Code, Muse, DeepSeek harne
 - **Baseline commit:** `28774e5125c57854eb4386e878b0ed7fcc830949` (`docs: remove a local machine path from the spec`).
 - **Rollback refs:** local tag `backup/web-preview-2026-11-11-28774e5` and remote branch `backup/web-preview-2026-11-11` both point to the baseline commit.
 - **Protected checkout:** `/Users/bjt/Projects/ai-petverse` remains on `feat/web-pet-gamification` and is not edited by this iteration.
-- **Active isolated worktree:** `/Users/bjt/.codex/worktrees/web-preview-iteration/ai-petverse`, branch `codex/web-life-slice`.
+- **Active isolated worktree:** `/Users/bjt/.codex/worktrees/web-preview-iteration/ai-petverse`, branch `codex/live-handoff-docs`.
 - **Remote preview branch:** `feat/web-pet-gamification`; it is live at <https://tooonnnnyyy.github.io/ai-petverse/>.
-- **Live commit:** `945fdf9494227edccde6dbf15e697967e9a9b7d2` (PR #14 squash merge).
-- **Live rollback tag:** `backup/live-web-2026-11-12-945fdf9`.
+- **Live commit:** `05142a015a081e51ac426fb2f09bf83ece64dbdf` (PR #16 squash merge).
+- **Live workflow:** `43337939509` (Test and build + Deploy both passed).
+- **Live assets:** `index-BZH4X71H.js`, `index-DfV3gbWP.css`; Pages HTTP response `200` at the preview URL.
+- **Live rollback tags:** `backup/live-web-2026-11-12-945fdf9` and `backup/live-web-2026-11-12-05142a0`.
 - **Next-loop rollback tag:** `backup/next-loop-2026-11-12-18a1723` (before local life/photo work).
-- **Current review commit:** `0f0d77c` (PR #16, clean/mergeable against the live preview branch).
+- **Current review state:** PR #16 is merged; live Pages is updated. Continue from a new isolated branch for follow-up work.
 
 ## Verified at baseline
 
@@ -29,8 +31,8 @@ The Web MVP has onboarding, drawn cat/dog pets, autonomous idle states, pet/drag
 
 ## Known gaps carried into this iteration
 
-- No user pet photo upload or photo-grounded personalization.
-- No Profile / Settings / correction editor.
+- No account, email opt-in, Web Push/email delivery, or cloud photo processing.
+- No Profile / Settings / correction editor for the new photo metadata yet.
 - No likeness or usefulness feedback loop.
 - No care invitations or outing offers.
 - No extension, PWA, backend, remote analytics, account, or LLM chat.
@@ -47,7 +49,7 @@ The Web MVP has onboarding, drawn cat/dog pets, autonomous idle states, pet/drag
 
 ## Active work
 
-- Codex is no longer waiting on the initial preview release: PR #14 is merged and live. The next work should be a small reviewable slice, not a large rewrite.
+- Codex shipped the local pet-life/photo-grounding slice. The next work should be a small reviewable slice, not a large rewrite.
 - **2026-11-11 — Codex:** identified three low-risk fixes for the live feedback loop: remove the `kms` distance false positive from urgent-help matching, keep level-up cards usable on short mobile stages, and avoid rendering the decorative bowl while the pet is eating.
 - Next agent should read this file, inspect `git status`, run the relevant Web checks, and append a dated entry before handing work off.
 
@@ -60,13 +62,14 @@ The Web MVP has onboarding, drawn cat/dog pets, autonomous idle states, pet/drag
 - **2026-11-12 — Codex:** owner asked to accelerate delivery. PR #14 was squash-merged as `945fdf9`; Actions `43329619789` passed Test and build + Deploy; live Pages now returns HTTP 200 with the new assets `index-D8jF6cSe.js` and `index-CvQ9mM1M.css`. Added rollback tag `backup/live-web-2026-11-12-945fdf9`.
 - **2026-11-12 — Codex:** added research notes for FureverDock, GitHub/open-source references, pet-industry services, and visual-realism experiments. Added the local life loop: versioned signal caps, active foreground minutes, deterministic outing discovery/rarity/pity, coins, courses and shop inventory. Added onboarding breed choices (orange cat, tabby cat, golden retriever, black lab), optional consented local photo import (up to 3 images in IndexedDB), photo-grounded gentle motion fallback, and a Pet life panel. Local proof: 15 test files / 124 tests passed, typecheck and Vite production build passed. No photos or credentials entered the repository.
 - **2026-11-12 — Codex:** original PR #15 conflicted because its branch retained the pre-squash history; it was closed without merge. Rebased the same product commit onto live preview SHA `945fdf9` as branch `codex/web-life-slice`, opened PR #16, and verified GitHub reports `MERGEABLE` / `CLEAN`. Live Pages remains unchanged pending review.
+- **2026-11-12 — Codex:** owner authorized direct merge. PR #16 squash-merged as `05142a0`; Actions `43337939509` passed Test and build + Deploy; Pages returned HTTP 200 with assets `index-BZH4X71H.js` and `index-DfV3gbWP.css`. Added rollback tag `backup/live-web-2026-11-12-05142a0`. Preview is available at <https://tooonnnnyyy.github.io/ai-petverse/>.
 
 ## Next priorities for allocation
 
 1. **P0 — live feedback loop:** owner playtests the live URL and records concrete friction; Codex fixes only reproducible/high-value issues in small PRs.
 2. **P1 — local feedback panel:** likeness (`yes/partly/no`), usefulness, optional correction, local save, and export-safe evidence. No remote analytics or raw conversation storage.
 3. **P1 — Profile / Settings:** edit profile facts, corrections, calm motion, photo deletion, and full local-data deletion.
-4. **P1 — local photo path:** explicit consent, IndexedDB-only storage, drawn fallback, and clear “photo-grounded approximation” wording.
+4. **P1 — photo realism:** compare 2.5D vs short image-to-video experiments for orange cat/golden retriever; preserve local fallback and clear “photo-grounded approximation” wording.
 5. **P2 — extension:** thin Manifest V3 popup after the Web loop has feedback evidence; no passive browsing surveillance.
 6. **Separate native track:** iOS Simulator/TestFlight and RealityKit review remain independent from the live Web preview.
 

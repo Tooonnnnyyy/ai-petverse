@@ -37,6 +37,7 @@ export type StageProps = {
   onDragEnd: (x: number, speedPxS: number, zone: DropZone | null) => void;
   onDragCancel: () => void;
   onPounce: () => void;
+  photoSrc?: string | null;
   overlay?: ReactNode;
   cards?: ReactNode;
 };
@@ -233,6 +234,7 @@ export function Stage(p: StageProps) {
             onPet={p.onPet}
             onKey={onKey}
             juice={p.juice}
+            photoSrc={p.photoSrc}
           />
         </div>
       </div>

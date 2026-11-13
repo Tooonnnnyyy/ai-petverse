@@ -6,6 +6,7 @@ import type {
   BondSource,
   CareMomentId,
   CoatId,
+  CourseId,
   ComfortStyle,
   Correction,
   Energy,
@@ -49,6 +50,12 @@ export function newSave(installSeed: number): SaveV2 {
     v: 2,
     installSeed: installSeed >>> 0,
     profile: null,
+    photo: null,
+    life: {
+      signals: { interaction: 0, activeMinute: 0, outing: 0, course: 0 },
+      daily: { day: "", counts: { interaction: 0, activeMinute: 0, outing: 0, course: 0 } },
+      coins: 30, purchases: [], equipped: null, completedCourses: [], activeCourse: null, rareMisses: 0, memories: [],
+    },
     corrections: [],
     bond: emptyLedger(),
     album: emptyAlbum(),
@@ -99,6 +106,38 @@ function parseProfile(x: unknown): PetProfile | null {
     trigger: oneOf(x.trigger, TRIGGERS),
     favouriteActivity: str(x.favouriteActivity, 40),
     coat: oneOf(x.coat, COATS),
+    ...(oneOf(x.breed, species === "cat" ? ["orangeCat", "tabbyCat"] as const : ["goldenRetriever", "blackLab"] as const) ? { breed: x.breed as PetProfile["breed"] } : {}),
+  };
+}
+
+function parseLife(x: unknown): SaveV2["life"] {
+  const d = newSave(0).life;
+  if (!isObj(x)) return d;
+  const signals = isObj(x.signals) ? x.signals : {};
+  const daily = isObj(x.daily) ? x.daily : {};
+  const dailyCounts = isObj(daily.counts) ? daily.counts : {};
+  const purchases = Array.isArray(x.purchases) ? uniq(x.purchases.filter((v): v is SaveV2["life"]["purchases"][number] => typeof v === "string" && ["bandana", "bow", "picnic", "feast"].includes(v)).slice(-20)) : [];
+  return {
+    signals: {
+      interaction: count(signals.interaction), activeMinute: count(signals.activeMinute), outing: count(signals.outing),
+      course: count(signals.course),
+    },
+    daily: { day: str(daily.day, 10), counts: {
+      interaction: count(dailyCounts.interaction), activeMinute: count(dailyCounts.activeMinute), outing: count(dailyCounts.outing), course: count(dailyCounts.course),
+    } },
+    coins: count(x.coins, d.coins),
+    purchases,
+    equipped: x.equipped === "bandana" || x.equipped === "bow" ? x.equipped : null,
+    completedCourses: Array.isArray(x.completedCourses) ? uniq(x.completedCourses.filter((v): v is SaveV2["life"]["completedCourses"][number] => typeof v === "string" && ["gardenClub", "trailSchool", "manners"].includes(v)).slice(-20)) : [],
+    activeCourse: isObj(x.activeCourse) && typeof x.activeCourse.id === "string" && ["gardenClub", "trailSchool", "manners"].includes(x.activeCourse.id) ? {
+      id: x.activeCourse.id as CourseId,
+      startedAt: typeof x.activeCourse.startedAt === "number" ? x.activeCourse.startedAt : 0,
+      endsAt: typeof x.activeCourse.endsAt === "number" ? x.activeCourse.endsAt : 0,
+    } : null,
+    rareMisses: count(x.rareMisses),
+    memories: Array.isArray(x.memories) ? x.memories.filter(isObj).slice(-50).map((m) => ({
+      id: str(m.id, 64), place: oneOf(m.place, ["garden", "riverside", "market", "hills"] as const) ?? "garden", rarity: oneOf(m.rarity, ["common", "uncommon", "rare"] as const) ?? "common", at: time(m.at) ?? 0, storyId: str(m.storyId, 64), souvenir: typeof m.souvenir === "string" ? m.souvenir.slice(0, 64) : null,
+    })) : [],
   };
 }
 
@@ -148,17 +187,23 @@ function parseOuting(x: unknown): Outing | null {
     endsAt: startedAt + plannedMin * 60_000, // derived, so a tampered endsAt cannot stretch an outing
     recalledAt: time(x.recalledAt),
     creditedAt: time(x.creditedAt),
+    ...(isObj(x.discovery) ? { discovery: {
+      score: Math.min(100, count(x.discovery.score)),
+      purchaseBoost: typeof x.discovery.purchaseBoost === "number" && Number.isFinite(x.discovery.purchaseBoost) ? Math.min(0.05, Math.max(0, x.discovery.purchaseBoost)) : 0,
+      rareMisses: Math.min(8, count(x.discovery.rareMisses)),
+    } } : {}),
   };
 }
 
 function parseReward(x: unknown): OutingReward | null {
   if (!isObj(x) || typeof x.storyId !== "string" || !STORY_IDS.includes(x.storyId)) return null;
   if (x.kind === "souvenir" && typeof x.id === "string" && SOUVENIR_IDS.includes(x.id)) {
-    return { kind: "souvenir", id: x.id, storyId: x.storyId, isNew: true };
+    const rarity = oneOf(x.rarity, ["common", "uncommon", "rare"] as const);
+    return { kind: "souvenir", id: x.id, storyId: x.storyId, isNew: true, ...(rarity ? { rarity } : {}) };
   }
   const place = oneOf(x.place, PLACE_IDS) ?? placeOfStory(x.storyId);
   if (x.kind === "postcard" && place) {
-    return { kind: "postcard", place, storyId: x.storyId, hint: x.hint === "longerTrip" ? "longerTrip" : null };
+    return { kind: "postcard", place, storyId: x.storyId, hint: x.hint === "longerTrip" ? "longerTrip" : null, ...(oneOf(x.rarity, ["common", "uncommon", "rare"] as const) ? { rarity: x.rarity as "common" | "uncommon" | "rare" } : {}) };
   }
   return null;
 }
@@ -200,6 +245,8 @@ export function parseSave(raw: unknown, fallbackSeed?: number): SaveV2 {
   return {
     ...base,
     profile: parseProfile(x.profile),
+    photo: isObj(x.photo) && x.photo.consent === true ? { consent: true, count: count(x.photo.count), updatedAt: str(x.photo.updatedAt, 30), avatarVersion: count(x.photo.avatarVersion, 1) } : null,
+    life: parseLife(x.life),
     corrections: parseCorrections(x.corrections),
     bond: parseBond(x.bond),
     album: parseAlbum(x.album),

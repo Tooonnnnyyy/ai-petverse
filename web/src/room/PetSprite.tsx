@@ -2,6 +2,7 @@
 // Movement is done by the parent mover (translate3d); this flips facing and crossfades poses over 120 ms.
 import { forwardRef, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import PlaceholderPet from "../art/PlaceholderPet";
+import { PhotoPet } from "../art/PhotoPet";
 import type { CoatId, Species } from "../shared/types";
 import type { DragHandlers } from "../hooks/useDrag";
 import type { Look } from "./pose";
@@ -24,6 +25,7 @@ export const PetSprite = forwardRef<HTMLButtonElement, {
   onPet: () => void;
   onKey: (e: KeyboardEvent<HTMLButtonElement>) => void;
   juice: number; // bumps on every accepted pet
+  photoSrc?: string | null;
 }>(function PetSprite(p, ref) {
   const cur: Layer = { key: lookKey(p.look, p.frame), look: p.look, frame: p.frame };
   const [prev, setPrev] = useState<Layer | null>(null);
@@ -59,7 +61,7 @@ export const PetSprite = forwardRef<HTMLButtonElement, {
 
   const render = (l: Layer, cls: string) => (
     <span key={l.key} className={`pet-layer ${cls}`}>
-      <PlaceholderPet species={p.species} coat={p.coat} slot={l.look.slot} frame={l.frame} eyes={l.look.eyes} mouth={l.look.mouth} />
+      {p.photoSrc ? <PhotoPet src={p.photoSrc} name={p.label} slot={l.look.slot} /> : <PlaceholderPet species={p.species} coat={p.coat} slot={l.look.slot} frame={l.frame} eyes={l.look.eyes} mouth={l.look.mouth} />}
     </span>
   );
 
